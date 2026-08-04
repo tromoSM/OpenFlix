@@ -1,0 +1,18 @@
+{
+    "source":{
+        "from":"tromoSM",
+        "contact":"none",
+        "manifest_version":1    
+    },
+    "config":{
+        "server_list":{
+            "keep_hidden":"hide"
+        }
+    },
+    "server_list":[
+        {
+            "name":"test site",
+            "url":"https://google.com/?t={imdb}"
+        }
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "openflix_manifest":{
+        "version":1,
+        "manifest_version":1
+    },
+    "api":{
+        "api":{
+            "by":"https://simkl.com",
+            "docs":"https://api.simkl.org/api-reference"
+        },
+        "start_url":"https://data.simkl.in/discover/",
+        "structure":{
+            "page":"page",
+            "limit":"limit",
+            "posters":"https://simkl.in/posters/{posterID}_m.jpg",
+            "backdrops":"http://simkl.in/fanart/{backdropID}_medium.webp",
+            "pages":{
+                "movies/popular":"trending/today_100.json"
+            },
+            "response":{
+                "backdropID":"fanart",
+                "posterID":"poster"
+            }
+        }
+    },
+    "image_providers":{
+        "additional_images":{
+            "fanarttv":{
+               "optional_personal_apikey":false,
+               "get_your_api_key_from":"https://fanart.tv/get-an-api-key/#personal" 
+            }
+        }
+    }
+}
