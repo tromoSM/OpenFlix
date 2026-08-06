@@ -14,20 +14,18 @@
             "limit":"limit",
             "posters":"https://simkl.in/posters/{posterID}_m.jpg",
             "backdrops":"http://simkl.in/fanart/{backdropID}_medium.webp",
+            "landscape_poster":"https://simkl.in/posters/{posterID}_w.jpg",
             "pages":{
                 "movies/popular":"trending/today_100.json"
             },
             "response":{
                 "backdropID":"fanart",
-                "posterID":"poster"
-            }
-        }
-    },
-    "image_providers":{
-        "additional_images":{
-            "fanarttv":{
-               "optional_personal_apikey":false,
-               "get_your_api_key_from":"https://fanart.tv/get-an-api-key/#personal" 
+                "posterID":"poster",
+                "status":"status",
+                "release_date":"release_date",
+                "plot":"overview",
+                "genre_list":"genres",
+                "length":"runtime"
             }
         }
     }

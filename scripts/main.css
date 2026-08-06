@@ -27,7 +27,8 @@ section[fill]{
   align-items: center;
   scrollbar-width: thin;
   overflow-x: scroll;
-    margin: 34px 27px;
+  margin: 34px 27px;
+  padding: 2px 0px;
   height: 270px;
 }
 movie{
@@ -94,13 +95,32 @@ section[fill] img{
     height: 100%;
 }
 fullwindow{
+  position: fixed;
+  width: 100vw;
+  overflow-x: hidden;
+  height: 100vh;
+  background: linear-gradient(90deg,transparent -150%,black 70%);
+  transition: 0.2s all,0.5s backdrop-filter;
+  left: 0;
+  top: 0;
+}
+fullwindow:has([backdrop]:not([loaded])){
+  backdrop-filter: blur(36px);
+}
+fullwindow [backdrop]{
+    opacity: 0;
     position: fixed;
-    width: 100vw;
-    height: 100vh;
-    background-color: red;
-    transition: 0.2s;
-    left: 0;
-    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.4);
+    z-index: -1;
+    will-change: transform,scale,opacity;
+    transition: 0.3s opacity, 0.3s 0.5s transform ;
+}
+fullwindow [backdrop][loaded]{
+    opacity: 1;
+    transform: scale(1);
 }
 fullwindow[closing]{
     transform: translateX(100vw);
@@ -118,6 +138,7 @@ fullwindow[closing]{
   left: 10px;
   top: 10px;
   display: flex;
+  z-index: +9999;
   justify-content: center;
   align-items: center;
   border-radius: 50px;
@@ -133,4 +154,138 @@ fullwindow[closing]{
   transition: 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
     filter: brightness(3) saturate(1.3);
     box-shadow: 2px 2px 3px -4px rgba(255, 255, 255, 0.45) inset, -2px -2px 2px -1px rgba(255, 255, 255, 0.12) inset, 0px 0px 15px rgba(0, 0, 0, 0.69);
+}
+
+/*by Chris Coyier - @chriscoyier https://codepen.io/chriscoyier/pen/YzKWYWa */
+fullwindow[info] [hiddenB] {
+  position: relative;
+  color: white;
+}
+fullwindow[info] [head]{
+  font: 70px inter, sans-serif;
+  font-weight: 900;
+}
+
+@supports (backdrop-filter: blur(12px)) {
+  fullwindow[info] [hiddenB] {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  fullwindow[info] h1{
+    backdrop-filter: blur(14px) brightness(2.3);
+    background: #ffffff0d;
+    clip-path: url(#blurmask);
+    height: 80px;
+  }
+}
+fullwindow[info]{
+    display: flex;
+    flex-direction: column;
+}
+fullwindow[info]::after{
+    width: 100%;
+    z-index: -1;
+    position: fixed;
+    content: '';
+    left: 0;
+    bottom: 0;
+    background: black;
+    height: 25%;
+    mask: linear-gradient(0deg,white -8%,#f000 100%);
+}
+p[vibrant]{
+    color: #ffffff3d;
+}
+fullwindow[info] *:not([backdrop],button,img,similarcard){
+    margin-left: 10px;
+}
+plot{
+  max-width: 85%;
+  background: #ffffff05;
+  padding: 9px 14px;
+  box-sizing: border-box;
+  margin: 8px 0px;
+  width: fit-content;
+  border-radius: 25px;
+  color: #ffffffed;
+  backdrop-filter:blur(31px) brightness(1.7);
+  font-size: 15px;
+}
+fullwindow[info] playcontrol button{
+  background: #ffffff24;
+  border: none;
+  font-family: inherit;
+  border-radius: 50px;
+  padding: 9px 13px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: white;
+  backdrop-filter: blur(20px);
+}
+fullwindow[info] playcontrol{
+    gap: 5px;
+    display: flex;
+}
+playcontrol button::before{
+    font-family: bootstrap-icons !important;
+    font-size: 11px;
+    margin-right: 5px;
+}
+playcontrol [notplayable]::before{
+    content: '\F33A';
+}
+playcontrol [trailer]::before{
+    content: '\F3C3';
+}
+playcontrol [playable]::before{
+    content: '\F4F4';
+}
+fullwindow{
+    overflow-y: auto;
+}
+fullwindow section:first-of-type{
+    height: 100vh;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+fullwindow section:nth-of-type(2){
+    height: 100vh;
+    flex-shrink: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+fullwindow section:nth-of-type(2) img {
+	height: 150px;
+	border-radius: 20px;
+}
+fullwindow section:nth-of-type(2) similar{
+    display: flex;
+    overflow-x: scroll;
+    flex-direction: row;
+    scrollbar-width: none;
+}
+
+simlarcard {
+	border-radius: 20px;
+	display: block;
+	position: relative;
+	width: 267px;
+    cursor: pointer;
+	overflow: clip;
+	margin: 0px !important;
+	height: 171px;
+	backdrop-filter: blur(7px) brightness(1.6);
+	padding: 4px;
+	margin-right: 5px !important;
+}
+simlarcard p {
+	color: white;
+	font-size: 12px;
+	text-align: center;
+    margin: 0px !important;
+    text-shadow: 0px 0px 12px black;
 }

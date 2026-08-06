@@ -1,0 +1,17 @@
+{
+    "openflix_manifest":{
+        "name":"config",
+        "version":1,
+        "manifest_version":1
+    },
+    "config":{
+        "waittime_after_release":{
+            "value":10,
+            "description":"When will users be able to click watch after the release day of the movie\nMeasurement: Days(int)\neg: 10 -> users will only be able to watch after 10days of release"
+        },
+        "wait_after_status":{
+            "value":"ended",
+            "description":"When will users be able to click watch based on the status of of the movie\nMeasurement: Status(str)\ntip: use false to turn off the status check\neg: ended -> users will only able to watch if api-response.[keyword:status] is 'ended'"
+        }
+    }
+}
