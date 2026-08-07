@@ -62,7 +62,24 @@ window.addEventListener('DOMContentLoaded',function(){
                 trailer.setAttribute('side','')
                 trailer.setAttribute('trailer','')
                 trailer.innerText='watch trailer'
-                
+                trailer.addEventListener('click',async function(){
+                    let trailerwindow=document.createElement('iframewindow')
+                    trailerwindow.innerHTML=`
+<iframe src="https://www.youtube.com/embed/${movie[keyword.trailer]}" title="${movie.title} trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+                    let trailerclose=document.createElement('button')
+                    trailerclose.setAttribute('back','')
+                    trailerclose.addEventListener('click',async function(){
+                        trailerwindow.setAttribute('closing','')
+                        await sleep(300)
+                        trailerwindow.remove()
+                    })
+                    trailerwindow.append(trailerclose)
+                    trailerwindow.setAttribute('closing','')
+                    document.body.append(trailerwindow)
+                    await sleep(300)
+                    trailerwindow.removeAttribute('closing')
+
+                })
                 //waittimecheck
                 let release=new Date(movie[keyword.release_date])
                 let now=new Date()
@@ -97,8 +114,10 @@ window.addEventListener('DOMContentLoaded',function(){
                     const withtitle=data.movies.filter(mov=>{
                        return String(mov.title).toLowerCase().includes(movie.title.toLowerCase().split(':',1)[0])
                     })
-                    console.log(withtitle)
                     let similarwrap=document.createElement('similar')
+                    let sub=document.createElement('h3')
+                    sub.innerText=`Similar to ${movie.title}`
+                    
                     withtitle.forEach(similar=>{
                         if(similar.title!=movie.title){
                             let similarcard=document.createElement('simlarcard')
@@ -117,12 +136,13 @@ window.addEventListener('DOMContentLoaded',function(){
                             similarcard.append(cardim,simtitle)
                             similarwrap.append(similarcard)
                         }
-                            more.append(similarwrap)
+                            more.append(sub,similarwrap)
                     })
                 }    
                 else{
                     alert('no')
                 }            
+
                 controlbar.append(watch,trailer)
                 tab.setAttribute('info','')
                 tab.append(backdrop,back)

@@ -25,7 +25,8 @@
                 "release_date":"release_date",
                 "plot":"overview",
                 "genre_list":"genres",
-                "length":"runtime"
+                "length":"runtime",
+                "trailer":"trailer"
             }
         }
     }
