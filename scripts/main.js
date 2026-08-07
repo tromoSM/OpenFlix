@@ -6,7 +6,6 @@ window.addEventListener('DOMContentLoaded',function(){
     fetch('sources/config.json').then(text=>text.json()).then(configins=>{
         config=configins
     })
-    const proj_openflix_fanart='0eec0af899ff2d6b1dc0d78986566052'
     fetch('sources/api.json').then(text=>text.json()).then(api=>{
         let keyword=api.api.structure.response
         console.log(`using ${api.api.api.docs} [movie data]`)
@@ -110,15 +109,7 @@ window.addEventListener('DOMContentLoaded',function(){
 
                 let more=document.createElement('section')
                 //movieseries
-                if(String(movie.title).includes(':')){
-                    const withtitle=data.movies.filter(mov=>{
-                       return String(mov.title).toLowerCase().includes(movie.title.toLowerCase().split(':',1)[0])
-                    })
-                    let similarwrap=document.createElement('similar')
-                    let sub=document.createElement('h3')
-                    sub.innerText=`Similar to ${movie.title}`
-                    
-                    withtitle.forEach(similar=>{
+                function addtosimilar(similar){
                         if(similar.title!=movie.title){
                             let similarcard=document.createElement('simlarcard')
                             let cardim=document.createElement('img')
@@ -134,15 +125,42 @@ window.addEventListener('DOMContentLoaded',function(){
                             simtitle.innerText=similar.title
 
                             similarcard.append(cardim,simtitle)
-                            similarwrap.append(similarcard)
+                            return similarcard
+                            
                         }
+                }
+                if(String(movie.title).includes(':')){
+                    const withtitle=data.movies.filter(mov=>{
+                       return String(mov.title).toLowerCase().includes(movie.title.toLowerCase().split(':',1)[0])
+                    })
+                    let similarwrap=document.createElement('similar')
+                    let sub=document.createElement('h3')
+                    sub.innerText=`Similar to ${movie.title}`
+                    
+                    withtitle.forEach(similar=>{
+                            let similarcard=addtosimilar(similar)
+                            if(similarcard){
+                             similarwrap.append(similarcard)
+                            }
                             more.append(sub,similarwrap)
                     })
-                }    
-                else{
-                    alert('no')
-                }            
-
+                }
+                //genreshi    
+                const simgenre=data.movies.filter(mov=>{
+                      return mov[keyword.genre_list].some(genre=>{
+                       return movie[keyword.genre_list].includes(genre)
+                       })
+                })
+                let similarwrap=document.createElement('similar')
+                let sub=document.createElement('h3')
+                sub.innerText=`Similar by genre`
+                simgenre.forEach(similar=>{
+                    let similarcard=addtosimilar(similar)
+                    if(similarcard){
+                      similarwrap.append(similarcard)
+                    }
+                    more.append(sub,similarwrap)
+                })
                 controlbar.append(watch,trailer)
                 tab.setAttribute('info','')
                 tab.append(backdrop,back)

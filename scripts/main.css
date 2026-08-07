@@ -144,13 +144,26 @@ fullwindow[closing]{
   border-radius: 50px;
   cursor: pointer;
   transition: 0.2s;
+  transform: scale(0);
   background: #0000003b;
   backdrop-filter: blur(20px) brightness(1.5);
   border: none;
   box-shadow: 2px 2px 3px -5px rgb(255, 255, 255) inset, -2px -2px 2px -3px rgba(255, 255, 255, 0.38) inset, 0px 0px 15px rgba(0, 0, 0, 0.69);
+  animation: open-button 0.4s 0.7s forwards;
+}
+@keyframes open-button{
+    from{
+        transform: scale(0);
+    }
+    60%{
+        transform: scale(1.2);
+    }
+    to{
+        transform: scale(1);
+    }
 }
 [back]:active{
-    transform: scale(1.07);
+    transform: scale(1.07) !important;
   transition: 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
     filter: brightness(3) saturate(1.3);
     box-shadow: 2px 2px 3px -4px rgba(255, 255, 255, 0.45) inset, -2px -2px 2px -1px rgba(255, 255, 255, 0.12) inset, 0px 0px 15px rgba(0, 0, 0, 0.69);
