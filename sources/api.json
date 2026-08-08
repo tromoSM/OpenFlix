@@ -8,6 +8,7 @@
             "by":"https://simkl.com",
             "docs":"https://api.simkl.org/api-reference"
         },
+        "translator":"https://api.simkl.com/{type}/{imdb}/?client_id={clientid}",
         "start_url":"https://data.simkl.in/discover/",
         "for":"recommendations and images",
         "structure":{
@@ -27,7 +28,10 @@
                 "plot":"overview",
                 "genre_list":"genres",
                 "length":"runtime",
-                "trailer":"trailer"
+                "trailer":"trailer",
+                "translator":{
+                    "similar":"users_recommendations"
+                }
             }
         },
         "searchapi":{
@@ -40,12 +44,15 @@
                     "imdb":"imdbID",
                     "error_message":"Error",
                     "poster":"Poster",
-                    "title":"Title"
+                    "title":"Title",
+                    "type":"Type",
+                    "type_movie":"movie",
+                    "type_series":"series"
                 }               
             }
         },
         "other_apis":{
-            "id_translater":{
+            "id_translator":{
                 "clientid":"a59f019ec98329eff4db7f034d7efe32aaf476cbf6fdf9fdc8b670ce63bcf0b0"
             }
         }

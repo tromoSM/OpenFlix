@@ -27,6 +27,16 @@ window.addEventListener('DOMContentLoaded',async function(){
                             sub.innerText=movie[searchapix.structure.response.title]
                             pos.src=movie[searchapix.structure.response.poster]
                             cont.append(pos,sub)
+                            let type
+                            if(movie[searchapix.structure.response.type]==searchapix.structure.response.type_movie){
+                                type='m'
+                            }
+                            else{
+                                type='s'
+                            }
+                            cont.addEventListener('click',function(){
+                                window.location.href=`../?page/=${type}${movie[imdb].replaceAll('t','')}`
+                            })
                             document.querySelector('[fill=search]').append(cont)
                         })
 

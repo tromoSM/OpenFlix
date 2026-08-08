@@ -1,6 +1,18 @@
-window.addEventListener('DOMContentLoaded',function(){
+window.addEventListener('DOMContentLoaded',async function(){
     function sleep(dih){
         return new Promise(resolve=>setTimeout(resolve,dih))
+    }
+    let autopage=new URLSearchParams(window.location.search).get('page/')
+    let linkid=new URLSearchParams(window.location.search).get('id/')
+    let autopage_type
+    if(autopage){
+        if(autopage.slice(0,1).toLowerCase()=='s'){
+            autopage_type='tv'
+        }
+        else{
+            autopage_type='movies'
+        }
+        console.log(`opening page:\n   type: ${autopage_type}\n   imdb: tt${autopage.slice(1)}`)
     }
     let config
     let searchapi
@@ -15,23 +27,9 @@ window.addEventListener('DOMContentLoaded',function(){
             searchapi=search.api_key
         }
     })
-    fetch('sources/api.json').then(text=>text.json()).then(api=>{
-        let keyword=api.api.structure.response
-        console.log(`using ${api.api.api.docs} [movie data]`)
-        console.log(`endpoint => ${api.api.start_url} [movie data]`)
-        document.querySelectorAll('section[fill]').forEach(fill=>{
-           console.log(`fetching ${api.api.start_url}${api.api.structure.pages[fill.getAttribute('fill')]}`)
-           fetch(`${api.api.start_url}${api.api.structure.pages[fill.getAttribute('fill')]}`).then(txt=>txt.json()).then(data=>{
-            data.movies.forEach(movie=>{
-              let contain=document.createElement('movie')
-              contain.setAttribute('openflixid',parseInt(movie.ids.tmdb)+67)
-              let im=document.createElement('img')
-              let title=document.createElement('p')
-              title.innerText=movie.title
-              im.src=String(api.api.structure.posters).replaceAll('{posterID}',movie[keyword.posterID])
-                
-              //movieinfo tab
-              contain.addEventListener('click',async function(){
+    const oldtitle=document.querySelector('title').innerHTML
+      async function openpage(movie,api,keyword,datatype='auto',data='',trueback=false){
+                document.querySelector('title').innerHTML=`${movie.title} - OpenFlix`
                 let tab=document.createElement('fullwindow')
                 let main=document.createElement('section')
                 let backdrop=document.createElement('img')
@@ -42,11 +40,19 @@ window.addEventListener('DOMContentLoaded',function(){
                 backdrop.addEventListener('load',function(){
                     backdrop.setAttribute('loaded','')
                 })
-                back.addEventListener('click',async function(){
-                    tab.setAttribute('closing','')
-                    await sleep(200)
-                    tab.remove()
-                })
+                if(!trueback){
+                    back.addEventListener('click',async function(){
+                        tab.setAttribute('closing','')
+                        document.querySelector('title').innerHTML=oldtitle
+                        await sleep(200)
+                        tab.remove()
+                    })
+                }
+                else{
+                    back.addEventListener('click',function(){
+                        window.history.back()
+                    })
+                }
                 let title=document.createElement('h1')
                 title.innerHTML=`
   <span hiddenB>${movie.title}</span>
@@ -125,7 +131,7 @@ window.addEventListener('DOMContentLoaded',function(){
                             cardim.src=String(api.api.structure.landscape_poster).replaceAll('{posterID}',similar[keyword.posterID])
 
                             similarcard.addEventListener('click',async function(){
-                                document.querySelector(`[openflixid="${parseInt(similar.ids.tmdb)+67}"]`).click()
+                                document.querySelector(`[openflixid="${parseInt(similar.ids.tmdb)+67}"]`).click() //addurltots
                                 tab.setAttribute('closing','')
                                 await sleep(300)
                                 tab.remove()
@@ -138,6 +144,7 @@ window.addEventListener('DOMContentLoaded',function(){
                             
                         }
                 }
+                if(datatype=='auto'){
                 if(String(movie.title).includes(':')){
                     const withtitle=data.movies.filter(mov=>{
                        return String(mov.title).toLowerCase().includes(movie.title.toLowerCase().split(':',1)[0])
@@ -154,6 +161,7 @@ window.addEventListener('DOMContentLoaded',function(){
                             more.append(sub,similarwrap)
                     })
                 }
+
                 //genreshi    
                 const simgenre=data.movies.filter(mov=>{
                       return mov[keyword.genre_list].some(genre=>{
@@ -170,6 +178,20 @@ window.addEventListener('DOMContentLoaded',function(){
                     }
                     more.append(sub,similarwrap)
                 })
+                }
+                else{
+                    let similarwrap=document.createElement('similar')
+                    let sub=document.createElement('h3')
+                    sub.innerText=`Similar to ${movie.title}`
+                    console.log(data)
+                    data.forEach(similar=>{
+                            let similarcard=addtosimilar(similar)
+                            if(similarcard){
+                             similarwrap.append(similarcard)
+                            }
+                            more.append(sub,similarwrap)
+                    })
+                }
                 controlbar.append(watch,trailer)
                 tab.setAttribute('info','')
                 tab.append(backdrop,back)
@@ -177,16 +199,48 @@ window.addEventListener('DOMContentLoaded',function(){
                 tab.setAttribute('closing','')
                 tab.append(main,more)
                 document.body.append(tab)
+                if(datatype=='auto'){
                 await sleep(300)
+                }
                 tab.removeAttribute('closing')
-    
-              })
+              }
+
+    fetch('sources/api.json').then(text=>text.json()).then(api=>{
+        let keyword=api.api.structure.response
+        console.log(`using ${api.api.api.docs} [movie data]`)
+        console.log(`endpoint => ${api.api.start_url} [movie data]`)
+        //bylink
+        if(autopage){
+            fetch(`${api.api.translator.replace('{type}',autopage_type).replace('{imdb}',"tt"+autopage.slice(1)).replace('{clientid}',api.api.other_apis.id_translator.clientid)}&app-name=OpenFlix&app-version=1.0&shareid=${linkid}`).then(text=>text.json()).then(res=>{
+               if(res.title){
+                        openpage(res,api,keyword,'other',res[api.api.structure.response.translator.similar],true)
+               }
+            })
+        }
+        else{
+        document.querySelectorAll('section[fill]').forEach(fill=>{
+           console.log(`fetching ${api.api.start_url}${api.api.structure.pages[fill.getAttribute('fill')]}`)
+           fetch(`${api.api.start_url}${api.api.structure.pages[fill.getAttribute('fill')]}`).then(txt=>txt.json()).then(data=>{
+            data.movies.forEach(movie=>{
+              let contain=document.createElement('movie')
+              contain.setAttribute('openflixid',parseInt(movie.ids.tmdb)+67)
+              let im=document.createElement('img')
+              let title=document.createElement('p')
+              title.innerText=movie.title
+              im.src=String(api.api.structure.posters).replaceAll('{posterID}',movie[keyword.posterID])
+                
+              //movieinfo tab
+            
             //
               contain.append(im,title)
               fill.append(contain)
+              contain.addEventListener('click',()=>{
+                openpage(movie,api,keyword,'auto',data)
+              })
               
             })
            })
         })
+    }
     })
 })
