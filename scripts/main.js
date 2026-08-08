@@ -67,7 +67,7 @@ window.addEventListener('DOMContentLoaded',async function(){
                 infobar.innerText=`${movie[keyword.genre_list][0]} ∙ ${movie[keyword.length]}`
                 
                 let plot=document.createElement('plot')
-                plot.innerText=movie[keyword.plot]
+                plot.innerText=movie[keyword.plot].replaceAll('<br>','\n')
 
                 let controlbar=document.createElement('playcontrol')
                 let watch=document.createElement('button')
@@ -219,9 +219,19 @@ window.addEventListener('DOMContentLoaded',async function(){
         }
         else{
         document.querySelectorAll('section[fill]').forEach(fill=>{
+           let head=document.createElement('h2')
+           head.innerText=fill.getAttribute('name')
+           head.setAttribute('sectitle','')
            console.log(`fetching ${api.api.start_url}${api.api.structure.pages[fill.getAttribute('fill')]}`)
            fetch(`${api.api.start_url}${api.api.structure.pages[fill.getAttribute('fill')]}`).then(txt=>txt.json()).then(data=>{
-            data.movies.forEach(movie=>{
+            let filtered
+            if(fill.getAttribute('filter')){
+                filtered=data[fill.getAttribute('filter')]
+            }
+            else{
+                filtered=data
+            }
+            filtered.forEach(movie=>{
               let contain=document.createElement('movie')
               contain.setAttribute('openflixid',parseInt(movie.ids.tmdb)+67)
               let im=document.createElement('img')
@@ -240,6 +250,7 @@ window.addEventListener('DOMContentLoaded',async function(){
               
             })
            })
+           fill.before(head)
         })
     }
     })

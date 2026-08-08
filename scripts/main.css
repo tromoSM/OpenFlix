@@ -27,9 +27,11 @@ section[fill]{
   align-items: center;
   scrollbar-width: thin;
   overflow-x: scroll;
+  overflow-y: hidden;
   margin: 34px 27px;
   padding: 2px 0px;
   height: 270px;
+  margin-top: 5px !important;
 }
 movie{
     height: 100%;
@@ -339,3 +341,7 @@ simlarcard:hover::before{
     transform: translate(-50%,-50%) scale(5);
     opacity: 0;
 } */
+h2[sectitle]{
+    margin-top: 20px;
+    color: white;
+}

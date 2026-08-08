@@ -18,7 +18,8 @@
             "backdrops":"http://simkl.in/fanart/{backdropID}_medium.webp",
             "landscape_poster":"https://simkl.in/posters/{posterID}_w.jpg",
             "pages":{
-                "movies/popular":"trending/today_100.json"
+                "movies/today/popular":"trending/today_100.json",
+                "movies/month/popular":"trending/today_100.json"
             },
             "response":{
                 "backdropID":"fanart",
