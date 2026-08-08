@@ -3,8 +3,17 @@ window.addEventListener('DOMContentLoaded',function(){
         return new Promise(resolve=>setTimeout(resolve,dih))
     }
     let config
+    let searchapi
     fetch('sources/config.json').then(text=>text.json()).then(configins=>{
         config=configins
+    })
+    fetch('sources/searchapi.json').then(text=>text.json()).then(search=>{
+        if(search!='enter_apikey_here'){
+            console.error('SearchApi key is not found. Go to sources/searchapi.json and enter your api there')
+        }
+        else{
+            searchapi=search.api_key
+        }
     })
     fetch('sources/api.json').then(text=>text.json()).then(api=>{
         let keyword=api.api.structure.response

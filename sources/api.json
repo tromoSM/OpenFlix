@@ -9,6 +9,7 @@
             "docs":"https://api.simkl.org/api-reference"
         },
         "start_url":"https://data.simkl.in/discover/",
+        "for":"recommendations and images",
         "structure":{
             "page":"page",
             "limit":"limit",
@@ -27,6 +28,25 @@
                 "genre_list":"genres",
                 "length":"runtime",
                 "trailer":"trailer"
+            }
+        },
+        "searchapi":{
+            "start_url":"https://www.omdbapi.com/?s=",
+            "for":"search and pages",
+            "space_character":"+",
+            "structure":{
+                "response":{
+                    "results":"Search",
+                    "imdb":"imdbID",
+                    "error_message":"Error",
+                    "poster":"Poster",
+                    "title":"Title"
+                }               
+            }
+        },
+        "other_apis":{
+            "id_translater":{
+                "clientid":"a59f019ec98329eff4db7f034d7efe32aaf476cbf6fdf9fdc8b670ce63bcf0b0"
             }
         }
     }
