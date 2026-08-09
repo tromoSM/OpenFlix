@@ -20,6 +20,10 @@ window.addEventListener('DOMContentLoaded',async function(){
                     let result=results[searchapix.structure.response.results]
                     if(result){
                         console.log(`search finished. found ${result.length} results`)
+                        let sectitle=document.createElement('h2')
+                        sectitle.setAttribute('sectitle','')
+                        sectitle.innerText=`Found ${result.length} results for ${search.replaceAll(searchapix.space_character,' ')}`
+                        document.querySelector('[fill=search]').before(sectitle)
                         result.forEach(movie=>{
                             let cont=document.createElement('movie')
                             let pos=document.createElement('img')

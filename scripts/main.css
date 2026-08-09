@@ -2,12 +2,24 @@
     font-family: inter;
     src: url("../assets/fonts/InterVar.ttf");
 }
-header{
-    height: 37px;
-    display: flex;
-    position: relative;
-    width: 100%;
-    align-items: center;
+:root {
+ /*https://linear-easing-generator.netlify.app*/
+  --spring-easing: linear(0, 0.01, 0.03, 0.11 5%, 0.59 15%, 0.78, 0.92, 1, 1.03, 1.04 42%, 1 69%, 1);
+  --spring-duration: 0.5s;
+}
+header {
+	display: grid;
+	align-items: center;
+	grid-template-columns: 1fr auto 1fr;
+	position: relative;
+	width: 100%;
+	align-items: center;
+	position: fixed;
+	z-index: +9999;
+	top: 0;
+	left: 0;
+	padding: 6px 10px;
+	backdrop-filter: blur(27px);
 }
 body{
     font-family: inter;
@@ -19,6 +31,9 @@ p,h1,h2,h3,h4{
 }
 header img{
     height: 37px;
+}
+body [sectitle]:first-of-type{
+    margin-top: 75px !important; /*header*/
 }
 section[fill]{
   display: flex;
@@ -99,6 +114,7 @@ section[fill] img{
 fullwindow{
   position: fixed;
   width: 100vw;
+  z-index: +99999;
   overflow-x: hidden;
   height: 100vh;
   background: linear-gradient(90deg,transparent -150%,black 70%);
@@ -344,4 +360,77 @@ simlarcard:hover::before{
 h2[sectitle]{
     margin-top: 20px;
     color: white;
+}
+center-tab {
+	display: flex;
+    position: relative;
+    align-items: center;
+	gap: 6px;
+}
+center-tab [search]{
+  background: #ffffff69;
+  border-radius: 50px;
+  height: 30px;
+  width: 30px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+tabs {
+	display: flex;
+	gap: 3px;
+	border-radius: 50px;
+	padding: 3px;
+	background: #ffffff1f;
+}
+tab {
+	background: #ffffff59;
+	padding: 4px 9px;
+	border-radius: 50px;
+    cursor: pointer;
+}
+center-tab input[searchin]{
+  position: absolute;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  border-radius: 50px;
+  background: transparent;
+  transition: 0.2s all,0.5s background;
+  width: 30px;
+  height: 30px;
+  color: transparent;
+  pointer-events: none;
+  padding: 0px 9px;
+  box-sizing: border-box;
+  font-size: 13px;
+}
+center-tab input[searchin][full]{
+  width: 100%;
+  pointer-events: all;
+  filter: none;
+  color: black;
+  transition: all var(--spring-easing) var(--spring-duration) !important;
+  height: 100%;
+  background: #ffffff;
+}
+center-tab:has(input[searchin][full]) button[search]{
+    position: absolute;
+    will-change: transform;
+    right: 0;
+    animation: open-search 0.4s;
+}
+@keyframes open-search{
+    from{
+        transform: translateX(-100px) scale(0);
+        opacity: 0;
+    }
+    50%{
+        transform: translateX(10px) scale(1.05);
+        opacity: 1;
+    }
+    to{
+        transform: translateX(0px) scale(1);
+        opacity: 1;
+    }
 }

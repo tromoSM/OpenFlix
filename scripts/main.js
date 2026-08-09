@@ -293,4 +293,15 @@ window.addEventListener('DOMContentLoaded',async function(){
         })
     }
     })
+    //uishi
+    let searchin=document.querySelector('input[searchin]')
+    document.querySelector('center-tab button[search]').addEventListener('click',function(){
+        if(searchin.hasAttribute('full')){
+            window.location.href=`search/?q=${searchin.value.replaceAll(' ','+')}`
+            searchin.removeAttribute('full')
+        }
+        else{
+            searchin.setAttribute('full','')
+        }
+    })
 })
