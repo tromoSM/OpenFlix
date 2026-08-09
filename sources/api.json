@@ -19,7 +19,9 @@
             "landscape_poster":"https://simkl.in/posters/{posterID}_w.jpg",
             "pages":{
                 "movies/today/popular":"trending/today_100.json",
-                "movies/month/popular":"trending/today_100.json"
+                "movies/month/popular":"trending/today_100.json",
+                "//movies/genre":"https://api.simkl.com/{type}/genres/{genre}/?client_id={clientid}",
+                "//movies/alltime/popular":"https://api.simkl.com/{type}/best/all?client_id={clientid}"
             },
             "response":{
                 "backdropID":"fanart",
@@ -31,7 +33,11 @@
                 "length":"runtime",
                 "trailer":"trailer",
                 "translator":{
-                    "similar":"users_recommendations"
+                    "similar":"users_recommendations",
+                    "similar_response":{
+                        "id_list":"ids",
+                        "id":"simkl"
+                    }
                 }
             }
         },
@@ -55,6 +61,15 @@
         "other_apis":{
             "id_translator":{
                 "clientid":"a59f019ec98329eff4db7f034d7efe32aaf476cbf6fdf9fdc8b670ce63bcf0b0"
+            },
+            "alltime_popular":{
+                "for":"recommendations for feed",
+                "structure":{
+                    "response":{
+                        "id":"simkl_id",
+                        "id_list":"ids"
+                    }
+                }
             }
         }
     }

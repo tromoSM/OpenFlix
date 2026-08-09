@@ -5,14 +5,27 @@ window.addEventListener('DOMContentLoaded',async function(){
     let autopage=new URLSearchParams(window.location.search).get('page/')
     let linkid=new URLSearchParams(window.location.search).get('id/')
     let autopage_type
+    let idstarter='tt'
+    let idtype
+    if(!localStorage.getItem('taste-profile')){
+        localStorage.setItem('taste-profile',{})
+    }
     if(autopage){
+        if(autopage.includes('xid')){
+            idstarter=''
+            idtype='simkl'
+        }
+        else{
+            idstarter='tt'
+            idtype='imdb'
+        }
         if(autopage.slice(0,1).toLowerCase()=='s'){
             autopage_type='tv'
         }
         else{
             autopage_type='movies'
         }
-        console.log(`opening page:\n   type: ${autopage_type}\n   imdb: tt${autopage.slice(1)}`)
+        console.log(`opening page:\n   type: ${autopage_type}\n   id type: ${idtype}\n   ${idtype}_id: ${idstarter}${autopage.slice(1)}`)
     }
     let config
     let searchapi
@@ -64,7 +77,12 @@ window.addEventListener('DOMContentLoaded',async function(){
                 `
                 let infobar=document.createElement('p')
                 infobar.setAttribute('vibrant','')
-                infobar.innerText=`${movie[keyword.genre_list][0]} ∙ ${movie[keyword.length]}`
+                if(movie[keyword.genre_list]&&movie[keyword.length]){
+                    infobar.innerText=`${movie[keyword.genre_list][0]} ∙ ${movie[keyword.length]}`
+                }
+                else{
+                    console.warn(`Couldnt find genre or length :\n   movie: ${movie.title}   datatype: ${datatype}\n   openviapage(trueback): ${trueback}`)
+                }
                 
                 let plot=document.createElement('plot')
                 plot.innerText=movie[keyword.plot].replaceAll('<br>','\n')
@@ -131,7 +149,9 @@ window.addEventListener('DOMContentLoaded',async function(){
                             cardim.src=String(api.api.structure.landscape_poster).replaceAll('{posterID}',similar[keyword.posterID])
 
                             similarcard.addEventListener('click',async function(){
-                                document.querySelector(`[openflixid="${parseInt(similar.ids.tmdb)+67}"]`).click() //addurltots
+                                let keyw=api.api.structure.response.translator.similar_response
+                                window.location.href=`./?page/=m${similar[keyw.id_list][keyw.id]}xid`
+                                
                                 tab.setAttribute('closing','')
                                 await sleep(300)
                                 tab.remove()
@@ -183,7 +203,6 @@ window.addEventListener('DOMContentLoaded',async function(){
                     let similarwrap=document.createElement('similar')
                     let sub=document.createElement('h3')
                     sub.innerText=`Similar to ${movie.title}`
-                    console.log(data)
                     data.forEach(similar=>{
                             let similarcard=addtosimilar(similar)
                             if(similarcard){
@@ -211,7 +230,7 @@ window.addEventListener('DOMContentLoaded',async function(){
         console.log(`endpoint => ${api.api.start_url} [movie data]`)
         //bylink
         if(autopage){
-            fetch(`${api.api.translator.replace('{type}',autopage_type).replace('{imdb}',"tt"+autopage.slice(1)).replace('{clientid}',api.api.other_apis.id_translator.clientid)}&app-name=OpenFlix&app-version=1.0&shareid=${linkid}`).then(text=>text.json()).then(res=>{
+            fetch(`${api.api.translator.replace('{type}',autopage_type).replace('{imdb}',idstarter+autopage.slice(1)).replace('{clientid}',api.api.other_apis.id_translator.clientid)}&app-name=OpenFlix&app-version=1.0&shareid=${linkid}`).then(text=>text.json()).then(res=>{
                if(res.title){
                         openpage(res,api,keyword,'other',res[api.api.structure.response.translator.similar],true)
                }
@@ -219,11 +238,21 @@ window.addEventListener('DOMContentLoaded',async function(){
         }
         else{
         document.querySelectorAll('section[fill]').forEach(fill=>{
+          let fetchpath
+          let manual=false
+          if(fill.getAttribute('fill').slice(0,2)=='//'){
+            let genre='action'
+            manual=true
+            fetchpath=`${api.api.structure.pages[fill.getAttribute('fill')].replace('{genre}',genre).replace('{type}',fill.getAttribute('type')).replace('{clientid}',api.api.other_apis.id_translator.clientid)}`
+          }
+          else{
+            fetchpath=`${api.api.start_url}${api.api.structure.pages[fill.getAttribute('fill')]}`
+          }
            let head=document.createElement('h2')
            head.innerText=fill.getAttribute('name')
            head.setAttribute('sectitle','')
            console.log(`fetching ${api.api.start_url}${api.api.structure.pages[fill.getAttribute('fill')]}`)
-           fetch(`${api.api.start_url}${api.api.structure.pages[fill.getAttribute('fill')]}`).then(txt=>txt.json()).then(data=>{
+           fetch(fetchpath).then(txt=>txt.json()).then(data=>{
             let filtered
             if(fill.getAttribute('filter')){
                 filtered=data[fill.getAttribute('filter')]
@@ -245,7 +274,17 @@ window.addEventListener('DOMContentLoaded',async function(){
               contain.append(im,title)
               fill.append(contain)
               contain.addEventListener('click',()=>{
-                openpage(movie,api,keyword,'auto',data)
+                if(manual){
+                    let dict=api.api.other_apis.alltime_popular.structure.response
+                     fetch(`${api.api.translator.replace('{type}','movies').replace('{imdb}',movie[dict.id_list][dict.id]).replace('{clientid}',api.api.other_apis.id_translator.clientid)}&app-name=OpenFlix&app-version=1.0&shareid=${linkid}`).then(text=>text.json()).then(res=>{
+                         if(res.title){
+                            openpage(res,api,keyword,'other',res[api.api.structure.response.translator.similar])
+                         }
+                     })
+                }
+                else{
+                    openpage(movie,api,keyword,'auto',data)
+                }
               })
               
             })
