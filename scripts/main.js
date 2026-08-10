@@ -295,13 +295,30 @@ window.addEventListener('DOMContentLoaded',async function(){
     })
     //uishi
     let searchin=document.querySelector('input[searchin]')
+    let icon=document.querySelector('[searchicon')
     document.querySelector('center-tab button[search]').addEventListener('click',function(){
         if(searchin.hasAttribute('full')){
-            window.location.href=`search/?q=${searchin.value.replaceAll(' ','+')}`
+            if(searchin.value.replaceAll(' ','')!=''){
+               window.location.href=`search/?q=${searchin.value.replaceAll(' ','+')}`
+            }
             searchin.removeAttribute('full')
+            icon.className='bi bi-search'
         }
         else{
             searchin.setAttribute('full','')
         }
     })
+    searchin.addEventListener('keyup',function(key){
+        if(key.key=='Enter'){
+            document.querySelector('center-tab button[search]').click()
+        }
+        console.log(`normal :${searchin.valu}, stripped: ${searchin.value.replaceAll(' ','')} `)
+        if(searchin.value.replaceAll(' ','')!==''){
+            icon.className='bi bi-search'
+        }
+        else{
+            icon.className='bi bi-x-circle'
+        }
+    })
+    
 })
