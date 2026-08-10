@@ -7,6 +7,10 @@ window.addEventListener('DOMContentLoaded',async function(){
     let autopage_type
     let idstarter='tt'
     let idtype
+    let currenttab
+    
+    function tasteprofile(){}
+
     if(!localStorage.getItem('taste-profile')){
         localStorage.setItem('taste-profile',{})
     }
@@ -294,6 +298,7 @@ window.addEventListener('DOMContentLoaded',async function(){
     }
     })
     //uishi
+        //search
     let searchin=document.querySelector('input[searchin]')
     let icon=document.querySelector('[searchicon')
     document.querySelector('center-tab button[search]').addEventListener('click',function(){
@@ -320,5 +325,34 @@ window.addEventListener('DOMContentLoaded',async function(){
             icon.className='bi bi-x-circle'
         }
     })
-    
+        //tabs
+     if(!currenttab){
+        currenttab='home'
+     }
+     function refreshtab(){
+      document.querySelectorAll('tabs tab').forEach(tab=>{
+        if(tab.getAttribute('tab')==currenttab){
+            tab.setAttribute('active','')
+        }
+        else{
+            tab?.removeAttribute('active')
+        }
+       })
+     }
+     refreshtab()
+    document.querySelectorAll('tabs tab').forEach(tab=>{
+        tab.addEventListener('click',function(){
+            currenttab=tab.getAttribute('tab')
+            refreshtab()
+            document.querySelectorAll(`section:not([${currenttab}])`)?.forEach(tabs=>{
+                tabs.setAttribute('hiddenA','')
+                tabs.previousElementSibling.setAttribute('hiddenA','')
+            })
+            document.querySelectorAll(`section[${currenttab}]`)?.forEach(tabs=>{
+                tabs.previousElementSibling?.removeAttribute('hiddenA')
+                tabs?.removeAttribute('hiddenA')
+            })
+        })
+    })
+
 })

@@ -326,6 +326,7 @@ iframewindow{
     height: 100%;
     left: 0;
     display: block;
+    z-index: +99999;
     top: 0;
     transition: 0.3s;
 }
@@ -374,6 +375,7 @@ center-tab [search]{
   width: 30px;
   border: none;
   cursor: pointer;
+  z-index: +9;
   font-size: 16px;
 }
 tabs {
@@ -384,10 +386,30 @@ tabs {
 	background: #ffffff1f;
 }
 tab {
-	background: #ffffff59;
-	padding: 4px 9px;
-	border-radius: 50px;
+	background: #00000014;
+    padding: 5px 9px;
+    border-radius: 50px;
+    position: relative;
     cursor: pointer;
+    color: white;
+    font-size: 13px;
+}
+tab[active]::before{
+    transform: scale(1);
+    opacity: 1;
+}
+tab::before{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    transform: scale(0.5);
+    opacity: 0;
+    transition: 0.2s;
+    border-radius: 50px;
+    background: #ffffff40;
+    content: '';
 }
 center-tab input[searchin]{
   position: absolute;
@@ -402,6 +424,7 @@ center-tab input[searchin]{
   color: transparent;
   pointer-events: none;
   padding: 0px 9px;
+  will-change: width,height;
   box-sizing: border-box;
   font-size: 13px;
 }
@@ -412,6 +435,7 @@ center-tab input[searchin][full]{
   color: black;
   transition: all var(--spring-easing) var(--spring-duration) !important;
   height: 100%;
+  z-index: +9;
   background: #ffffff;
 }
 center-tab:has(input[searchin][full]) button[search]{
@@ -433,4 +457,12 @@ center-tab:has(input[searchin][full]) button[search]{
         transform: translateX(0px) scale(1);
         opacity: 1;
     }
+}
+section[hiddenA],[sectitle][hiddenA]{
+    opacity: 0;
+    margin: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    height: 0px;
+    transition:0.2s opacity,0.1s 0.3s height,0.1s 0.3s padding,0.1s 0.3s margin;
 }
