@@ -8,12 +8,43 @@ window.addEventListener('DOMContentLoaded',async function(){
     let idstarter='tt'
     let idtype
     let currenttab
-    
-    function tasteprofile(){}
 
     if(!localStorage.getItem('taste-profile')){
-        localStorage.setItem('taste-profile',{})
+        localStorage.setItem('taste-profile',JSON.stringify({}))
     }
+
+    function tasteprofile(genre,add){
+        let profile=JSON.parse(localStorage.getItem('taste-profile'))
+        if(profile[genre]){
+            profile[genre]=Number(profile[genre])+Number(add)
+        }
+        else{
+            profile[genre]=Number(add)
+        }
+        localStorage.setItem('taste-profile',JSON.stringify(profile))
+    }
+    function refreshtaste(refreshedby=''){
+        let highest=0
+        let genre
+        let refreshms
+        if(refreshedby!=''){
+            refreshms="\n   Profile was requested by <"+refreshedby.toLowerCase()+">"
+        }
+        Object.entries(JSON.parse(localStorage.getItem('taste-profile'))).forEach(([key,value])=>{
+            if(Number(value)>highest){
+                highest=Number(value)
+                genre=key
+            }
+        })
+        if(genre&&highest!=0){
+            return [genre,highest]
+        }
+        else{
+            console.log(`No stats to personalize recommendations. Recommending Action in feed.${refreshms}`)
+            return ['action',0]
+        }
+    }
+
     if(autopage){
         if(autopage.includes('xid')){
             idstarter=''
@@ -83,6 +114,9 @@ window.addEventListener('DOMContentLoaded',async function(){
                 infobar.setAttribute('vibrant','')
                 if(movie[keyword.genre_list]&&movie[keyword.length]){
                     infobar.innerText=`${movie[keyword.genre_list][0]} ∙ ${movie[keyword.length]}`
+                    movie[keyword.genre_list].forEach(genr=>{
+                        tasteprofile(genr,'1')
+                    })
                 }
                 else{
                     console.warn(`Couldnt find genre or length :\n   movie: ${movie.title}   datatype: ${datatype}\n   openviapage(trueback): ${trueback}`)
@@ -99,6 +133,11 @@ window.addEventListener('DOMContentLoaded',async function(){
                 trailer.setAttribute('trailer','')
                 trailer.innerText='watch trailer'
                 trailer.addEventListener('click',async function(){
+                    if(movie[keyword.genre_list]){
+                        movie[keyword.genre_list].forEach(genr=>{
+                            tasteprofile(genr,2)
+                        })
+                    }
                     let trailerwindow=document.createElement('iframewindow')
                     trailerwindow.innerHTML=`
 <iframe src="https://www.youtube.com/embed/${movie[keyword.trailer]}" title="${movie.title} trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
@@ -137,6 +176,11 @@ window.addEventListener('DOMContentLoaded',async function(){
                     watch.innerText='Watch'
                     watch.addEventListener('click',async function(){
                         console.log('watching')
+                        if(movie[keyword.genre_list]){
+                            movie[keyword.genre_list].forEach(genr=>{
+                              tasteprofile(genr,2)
+                         })
+                    }
                     })
                 }
                 else{
@@ -241,11 +285,13 @@ window.addEventListener('DOMContentLoaded',async function(){
             })
         }
         else{
+        let genrrr=refreshtaste('You might like')
+        console.log(`Recommending ${genrrr[0]} in feed. (personalized/${genrrr[1]})`)
         document.querySelectorAll('section[fill]').forEach(fill=>{
           let fetchpath
           let manual=false
           if(fill.getAttribute('fill').slice(0,2)=='//'){
-            let genre='action'
+            let genre=genrrr[0]
             manual=true
             fetchpath=`${api.api.structure.pages[fill.getAttribute('fill')].replace('{genre}',genre).replace('{type}',fill.getAttribute('type')).replace('{clientid}',api.api.other_apis.id_translator.clientid)}`
           }
