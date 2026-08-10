@@ -302,17 +302,17 @@ window.addEventListener('DOMContentLoaded',async function(){
                window.location.href=`search/?q=${searchin.value.replaceAll(' ','+')}`
             }
             searchin.removeAttribute('full')
-            icon.className='bi bi-search'
         }
         else{
             searchin.setAttribute('full','')
         }
+            icon.className='bi bi-search'
     })
     searchin.addEventListener('keyup',function(key){
         if(key.key=='Enter'){
             document.querySelector('center-tab button[search]').click()
+            icon.className='bi bi-search'
         }
-        console.log(`normal :${searchin.valu}, stripped: ${searchin.value.replaceAll(' ','')} `)
         if(searchin.value.replaceAll(' ','')!==''){
             icon.className='bi bi-search'
         }
