@@ -466,3 +466,56 @@ section[hiddenA],[sectitle][hiddenA]{
     height: 0px;
     transition:0.2s opacity,0.1s 0.3s height,0.1s 0.3s padding,0.1s 0.3s margin;
 }
+[smallactionb]{
+    height: 35px;
+    width: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}  
+[smallactionb]::before{
+    margin: 0px !important;
+    font-size: 16px;
+    will-change: transform;
+    transition: 0.2s;
+}
+[smallactionb]:active:before{
+    transform: scale(0.8);
+    transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+[smallactionb][actived]::before{
+    animation: open-spring 0.2s;
+    z-index: +1;
+}
+[action=watched][actived]::before{
+    color: #00000080;
+}
+@keyframes open-spring{
+    from,to{
+        transform: scale(1);
+    }
+    50%{transform: scale(1.2);}
+}
+[action=watched]::after{
+    position: absolute;
+    left: 0;
+    will-change: transform;
+    top: 0;
+    width: 100%;
+    transition: 0.2s;
+    content: '';
+    height: 100%;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.41);
+    transform: scale(0);
+}
+[action=watched][actived]::after{
+    transform: scale(1);
+}
+[action=like]::before{content: '\F407';}
+[action=like][actived]::before{content: '\F406';}
+[action=dislike]::before{content: '\F405';}
+[action=dislike][actived]::before{content: '\F404';}
+[action=watched]::before{content: '\F272';}
+[action=watchlist]::before{content: '\F1A2';}
+[action=watchlist][actived]::before{content: '\F199';}

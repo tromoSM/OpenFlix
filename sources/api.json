@@ -32,6 +32,8 @@
                 "genre_list":"genres",
                 "length":"runtime",
                 "trailer":"trailer",
+                "id_list":"ids",
+                "imdb":"imdb",
                 "translator":{
                     "similar":"users_recommendations",
                     "similar_response":{

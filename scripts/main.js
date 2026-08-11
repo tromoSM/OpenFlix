@@ -12,7 +12,9 @@ window.addEventListener('DOMContentLoaded',async function(){
     if(!localStorage.getItem('taste-profile')){
         localStorage.setItem('taste-profile',JSON.stringify({}))
     }
-
+    if(!localStorage.getItem('user-interact')){
+        localStorage.setItem('user-interact',JSON.stringify({}))
+    }
     function tasteprofile(genre,add){
         let profile=JSON.parse(localStorage.getItem('taste-profile'))
         if(profile[genre]){
@@ -125,13 +127,66 @@ window.addEventListener('DOMContentLoaded',async function(){
                 let plot=document.createElement('plot')
                 plot.innerText=movie[keyword.plot].replaceAll('<br>','\n')
 
-                let controlbar=document.createElement('playcontrol')
+                let controlbar=document.createElement('playcontrol') //add watchlist,watched,dislike,like
                 let watch=document.createElement('button')
                 watch.setAttribute('main','')
                 let trailer=document.createElement('button')
                 trailer.setAttribute('side','')
                 trailer.setAttribute('trailer','')
                 trailer.innerText='watch trailer'
+                let watchlist=document.createElement('button')
+                let watched=document.createElement('button')
+                let like=document.createElement('button')
+                let dislike=document.createElement('button')
+                watchlist.setAttribute('action','watchlist')
+                watched.setAttribute('action','watched')
+                like.setAttribute('action','like')
+                dislike.setAttribute('action','dislike');
+                
+                [watched,watchlist,like,dislike].forEach(act=>{
+                    act.setAttribute("smallactionb","")//add to recommendations
+                    act.addEventListener('click',function(){
+                        let liked=JSON.parse(localStorage.getItem('user-interact'))
+                         let type=act.getAttribute("action")
+                            if(act.hasAttribute('actived')){
+                                try{
+                                    delete liked[movie[keyword.id_list][keyword.imdb].replaceAll('t','')][type]
+                                    localStorage.setItem('user-interact',JSON.stringify(liked))
+                                    act.removeAttribute('actived')
+                                }
+                                catch(e){
+                                    console.error(e)
+                                }
+                            }
+                            else{
+                                try{
+                                   let intr
+                                   if(liked[movie[keyword.id_list][keyword.imdb].replaceAll('t','')]){
+                                       intr=liked[movie[keyword.id_list][keyword.imdb].replaceAll('t','')]
+                                   }
+                                   else{
+                                    intr={}
+                                   }
+                                   intr[type]=true
+                                   if(type=='like'&&intr['dislike']){
+                                    delete intr['dislike']
+                                    dislike?.removeAttribute('actived')
+                                   }
+                                   else if(type=='dislike'&&intr['like']){
+                                    delete intr['like']
+                                    like?.removeAttribute('actived')
+                                   }
+                                   liked[movie[keyword.id_list][keyword.imdb].replaceAll('t','')]=intr
+                                   localStorage.setItem('user-interact',JSON.stringify(liked))
+                                   act.setAttribute('actived','')
+                                }
+                                catch(er){
+                                    console.error(er)
+                                }
+                            
+                    }})
+                })
+
                 trailer.addEventListener('click',async function(){
                     if(movie[keyword.genre_list]){
                         movie[keyword.genre_list].forEach(genr=>{
@@ -259,13 +314,22 @@ window.addEventListener('DOMContentLoaded',async function(){
                             more.append(sub,similarwrap)
                     })
                 }
-                controlbar.append(watch,trailer)
+                controlbar.append(watch,trailer,watchlist,watched,like,dislike)
                 tab.setAttribute('info','')
                 tab.append(backdrop,back)
                 main.append(title,infobar,plot,controlbar)
                 tab.setAttribute('closing','')
                 tab.append(main,more)
                 document.body.append(tab)
+                //savedlikes n shi
+                if(localStorage.getItem('user-interact')){
+                    let liked=JSON.parse(localStorage.getItem('user-interact'))
+                    if(liked[movie[keyword.id_list][keyword.imdb].replaceAll('t','')]){
+                        Object.entries(liked[movie[keyword.id_list][keyword.imdb].replaceAll('t','')]).forEach(([type,val])=>{
+                            document.querySelector(`[action=${type}]`).setAttribute('actived','')
+                        })
+                    }
+                }
                 if(datatype=='auto'){
                 await sleep(300)
                 }
