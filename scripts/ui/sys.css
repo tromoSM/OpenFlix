@@ -1,0 +1,236 @@
+/*
+Copyright 2026 tromoSM
+https://github.com/tromoSM/easyJS-ui
+src/system.js as static/sys.css
+v1 GUI/CLI
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+@font-face {
+    font-family: SF Dih;
+    src: url("./InterVar.ttf");
+}
+@font-face {
+    font-family: SF Symbols;
+    src: url('./OpenRunde-Regular.woff2');
+}
+[tromoSM='sys$hide']{
+  position: fixed;
+  left: -200%;
+  opacity: 0;
+}
+message {
+	position: absolute;
+	bottom: 0;
+	text-align: center;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	left: 0;
+	display: block;
+	margin-bottom: 6px;
+	font-size: 14px;
+	color: white;
+	text-shadow: 0px 0px 10px #0000005e;
+}
+[i=error]{
+display: flex;
+  background: linear-gradient(180deg,#e75f1f,#da4106);
+  border-radius: 50px;
+  content: 'x';
+  font-weight: lighter;
+  font-family: SF Symbols;
+  width: 38px;
+  color: white;
+  height: 38px;
+  font-size: 42px;
+  justify-content: center;
+  align-content: center;
+  vertical-align: middle;
+  padding: 0;
+  overflow: hidden;
+  line-height: 79%;
+}
+row{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    padding: 10px;
+    padding-top: 15px;
+    gap: 10px;
+}
+dialcon{
+    background-color: #efefef;
+    padding: 3px 0px;
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-end;
+    display: flex;
+}
+dialcon button{
+    background-color: #fdfdfd;
+    margin-right: 10px;
+    border: 1px solid #e3dfdc;
+    border-radius: 5px;
+    padding: 2px 25px;
+}
+dialcon button:hover{
+    background-color: #f0f8ff;
+    border:1px solid #b9d7ef;
+}
+dialcon button:active{
+    background-color: #e0f1ff;;
+    border:1px solid #a4d1f4;
+}
+notification{
+  display: flex;
+  width: 417px;
+  flex-direction: column;
+  background: white;
+  box-shadow: 0px 0px 10px #00000030;
+  -moz-box-shadow:0px 0px 10px #00000030;
+  -webkit-box-shadow:0px 0px 10px #00000030;
+  overflow: hidden;
+  border-radius: 9px;
+  -moz-border-radius:9px;
+  -webkit-border-radius:9px;
+  min-height: 99px;
+  padding: 0;
+  justify-content: flex-end;
+  animation: scale-in 0.3s 1 ;
+}
+sys-msg{
+  word-break: break-all;
+  width: 90%;
+  max-height: 80px;
+  scrollbar-width: thin;
+}
+
+
+notify{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+[tromoSM='normalxdialog']{
+	position: relative;
+	width: 123px;
+	height: 123px;
+    transition: 0.3s;
+	display: block;
+	background: #151515f2;
+	padding: 10px 10px 20px 10px;
+	z-index: +999999999999999999;
+	border-radius: 10px;
+	animation: scale-in-s 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+	box-sizing: border-box;
+}
+[tromoSM='promptSYS']{
+  background: #151515;
+  padding: 10px 15px;
+  min-height: 84px;
+  min-width: 265px;
+  flex-direction: column;
+  transition: 0.2s;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  gap: 10px;
+  border-radius: 15px;
+  box-shadow: 2px 2px 1px -3px rgba(255, 255, 255, 0.37) inset, -2px -2px 2px -4px rgb(255, 255, 255) inset, 0px 0px 15px rgba(0, 0, 0, 0.329);
+  animation: scale-in-s 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+[tromoSM='promptSYS'] input{
+  background: #ffffff12;
+  border: none;
+  height: 27px;
+  padding: 0px 10px;
+  box-sizing: border-box;
+  border-radius: 50px;
+  outline: none;
+  font-size: 15px;
+  color: aliceblue;
+  font-family: inherit;
+  box-shadow: 2px 2px 1px -3px rgba(255, 255, 255, 0.76) inset, -2px -2px 1px -4px rgb(255, 255, 255) inset, 0px 0px 15px rgba(0, 0, 0, 0.329);
+}
+
+tromoSM-container {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 5px;
+}
+[tromoSM="sys-btn-non"],[tromoSM="sys-btn-fcs"]{
+	border: none;
+	border-radius: 50px;
+	padding: 6px 10px;
+	color: aliceblue;
+	font-family: inherit;
+    transition: 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+    cursor: pointer;
+}
+[tromoSM="sys-btn-non"]:active,[tromoSM="sys-btn-fcs"]:active{
+   	transform: scale(1.1);
+	filter: brightness(2) !important;
+}
+
+non-abs-message {
+	color: white;
+	font-family: inherit;
+	-webkit-font-feature-settings: "liga";
+	margin-top: 4px;
+}
+[tromoSM="sys-btn-non"]{
+	box-shadow: 2px 2px 1px -3px rgba(255, 255, 255, 0.13) inset, -2px -2px 2px -4px rgb(255, 255, 255) inset, 0px 0px 15px rgba(0, 0, 0, 0.2);
+	background: #f0f8ff03;
+}
+[tromoSM="sys-btn-fcs"]{
+	background: #f0f8ff0f;
+	box-shadow: 2px 2px 1px -3px rgba(255, 255, 255, 0.13) inset, -2px -2px 2px -4px rgb(255, 255, 255) inset, 0px 0px 15px rgba(0, 0, 0, 0.2);
+
+}
+@supports ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
+
+[tromoSM='normalxdialog']{
+backdrop-filter: blur(15px);
+  background: #0003;
+-webkit-backdrop-filter: blur(15px);
+}
+[tromoSM='promptSYS']{
+backdrop-filter: blur(15px);
+  background: #0000004a;
+-webkit-backdrop-filter: blur(15px);
+}
+}
+
+@keyframes scale-in{
+    from{
+        transform: scale(0.99);
+    }
+    to{
+        transform: scale(1);
+    }
+}
+@keyframes scale-in-s{
+    from{
+        transform: scale(0.9);
+    }
+    to{
+        transform: scale(1);
+    }
+}

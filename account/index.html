@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html accountpg>
+    <head>
+        <meta charset="UTF-8">
+        <title>Account - OpenFlix</title>
+        <link rel="icon" href="../assets/branding/account.svg">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="../scripts/main.css">
+        <link rel="stylesheet" href="../scripts/ui/sys.css">
+        <link rel="stylesheet" href="../scripts/ui/loader.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie.min.js"></script>
+        <script src="../scripts/ui/sys.js"></script>
+        <script src="../scripts/account.js"></script>
+    </head>
+    <body>
+        <header>
+            <nav>
+                <a href="../">
+                    <img src="../assets/branding/header-logo.png">
+                </a>
+            </nav>
+        </header>
+        <h1 title><i class="bi bi-person-circle"></i> Your Account</h1>
+        <aside>
+            <item>Account information</item>
+            <item>Account stats</item>
+            <item>Recommendations</item>
+            <item>History</item>
+            <seperator></seperator>
+            <item>Data & privacy</item>
+            <item>Contact Us</item>
+            <item>OpenFlix info</item>
+        </aside>
+        <main>
+            <section id="account_information">
+                <h1><a href="../"><button back="relative"></button></a> Account information</h1>
+                <h3><span>Date joined : </span><span fill="joined"></span></h3>
+                <h3><span>Account type : </span><span fill="account"></span></h3>
+            </section>
+            <section id="account_stats">
+               <h1><i class="bi bi-graph-up"></i> Account stats</h1>
+               <stats>
+                   <statbox><p>top genre</p><p big fill="topGenre"></p></statbox>
+                   <statbox><p>watched</p><p big fill="watchd"></p></statbox>
+                   <statbox><p>liked</p><p big liked></p></statbox>
+                   <statbox><p>Watchlisted</p><p big watchlist></p></statbox>
+                   <statbox><p>Searches</p><p big searches></p></statbox>
+                </stats>
+            </section>
+            <section id="recommendations">
+               <h1><i class="bi bi-play-circle-fill"></i> Recommendations</h1>
+               <p usemar bio>movie recommendations are personalized by the movies and series you watch and interact with in OpenFlix.</p>
+               <p usemar>Favourite genre : <span fill="topGenre"></span></p>
+
+               <button usemar reset="recommend" war="This will reset your recommendation preferences and remove your current personalized recommendations.">Reset recommendations</button>
+            </section>
+            <section id="history">
+               <h1><i class="bi bi-arrow-counterclockwise"></i> History</h1>
+               <shistory usemar>
+                <bar>Search history</bar>
+               </shistory>
+               <button usemar reset="history" war="This action will reset all your search history.">Reset search history</button>
+            </section> b
+            <section id="data_&_privacy">
+               <h1><i class="bi bi-shield-shaded"></i> Data & Privacy</h1>
+               <p bio usemar>We may use analytics to understand how the app is used and improve the experience. Some movie recommendations may be personalized based on the movies you watch and interact with, including your likes, searches, watchlist, and viewing history. Your recommendations, history, searches, stats, likes, and watchlists are stored only locally on your device and are not stored on our servers. We do not sell or share this locally stored information with third parties.</p>
+                
+               <button reset="export" what="export" usemar="left">export data</button>
+               <input type="file" accept=".openflix" hidden importfile>
+               <button reset="import" what="import" noalert war="this will overwrite the current data with the new data you're about to import. This action cannot be undone.">import data</button>
+               <button reset="reset all" warn="Erasing all data" extra war="This will reset all the data of your account including recommendation, history, preferences, likes and others. Export your data before erasing. This action cannot be undone.">Reset all data</button>
+            </section>
+            <section id="contact_us" infopage>
+               <h1><i class="bi bi-person-add"></i>Contact Us</h1>
+               <a usemar="left"link="mailto:tromosm7@gmail.com?subject=OpenFlix-Personal" subject='mail'><button def><i class="bi bi-envelope-arrow-up-fill"></i> contact by mail</button></a>
+               <a link="https://tromosm.gt.tc/?utm_source=openflix_supportfeedback&feedback=true" subject='feed'><button def><i class="bi bi-lightbulb-fill"></i> Requests and feedback</button></a>
+               <a link="https://tromosm.gt.tc/?utm_source=openflix_othr" subject='othr'><button def><i class="bi bi-code-slash"></i> Other projects from developer</button></a>
+            </section>
+            <section id="openflix_info">
+               <h1><i class="bi bi-person-add"></i> OpenFlix info</h1>
+                <h3 bio><span>Version : </span><span ex-fill="version"></span></h3>
+                <h3 bio><span>Released : </span><span ex-fill="release_date"></span></h3>
+                <h3 bio><span>Platform : </span><span ex-fill="platform"></span></h3>
+                <seperator></seperator>
+                <h3 bio><span>Data provider : </span><span ex-fill="data_provider"></span></h3>
+                
+                <legal usemar="left" bio hidden>
+                    <a href="../legal/#tos">terms of service</a>
+                    <a href="../legal/#privacy">privacy policy</a>
+                    <a href="../legal/#opensource">open source licenses</a>
+                    <a href="../legal/#credits">credits</a>
+                </legal>
+            </section>
+        </main>
+    </body>
+</html>

@@ -1,0 +1,11 @@
+{
+    "openflix":{
+        "version":"v1.0",
+        "version_class":"beta",
+        "stable":false,
+        "version_release":1,
+        "release_date":"2026/08/18",
+        "data_provider":"OpenFlix uses SIMKL and OMDb API as third party data providers. OpenFlix is not affiliated with or endorsed by SIMKL, OMDb API, or IMDb.",
+        "platform":"web/all"
+    }
+}

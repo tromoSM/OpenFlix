@@ -2,18 +2,30 @@ window.addEventListener('DOMContentLoaded',async function(){
     function sleep(dih){
         return new Promise(resolve=>setTimeout(resolve,dih))
     }
+    
+    let accinfotype='Local'
     let autopage=new URLSearchParams(window.location.search).get('page/')
     let linkid=new URLSearchParams(window.location.search).get('id/')
     let autopage_type
     let idstarter='tt'
     let idtype
     let currenttab
-
+    if(!localStorage.getItem('joined')){
+        let date=new Date()
+        localStorage.setItem('joined',`${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`)
+        localStorage.setItem('account',accinfotype)
+    }
     if(!localStorage.getItem('taste-profile')){
         localStorage.setItem('taste-profile',JSON.stringify({}))
     }
     if(!localStorage.getItem('user-interact')){
         localStorage.setItem('user-interact',JSON.stringify({}))
+    }
+    if(!localStorage.getItem('watchd')){
+        localStorage.setItem('watchd',0)
+    }
+    if(!localStorage.getItem('searchhist')){
+        localStorage.setItem('searchhist',JSON.stringify([]))
     }
     function tasteprofile(genre,add){
         let profile=JSON.parse(localStorage.getItem('taste-profile'))
@@ -24,6 +36,10 @@ window.addEventListener('DOMContentLoaded',async function(){
             profile[genre]=Number(add)
         }
         localStorage.setItem('taste-profile',JSON.stringify(profile))
+    }
+    function addwatched(){
+        let watched=Number(localStorage.getItem('watchd'))
+        localStorage.setItem('watchd',watched+1)
     }
     function refreshtaste(refreshedby=''){
         let highest=0
@@ -39,10 +55,12 @@ window.addEventListener('DOMContentLoaded',async function(){
             }
         })
         if(genre&&highest!=0){
+            localStorage.setItem('topGenre',genre)
             return [genre,highest]
         }
         else{
             console.log(`No stats to personalize recommendations. Recommending Action in feed.${refreshms}`)
+            localStorage.setItem('topGenre','no genre')
             return ['action',0]
         }
     }
@@ -231,6 +249,7 @@ window.addEventListener('DOMContentLoaded',async function(){
                     watch.innerText='Watch'
                     watch.addEventListener('click',async function(){
                         console.log('watching')
+                        addwatched()
                         if(movie[keyword.genre_list]){
                             movie[keyword.genre_list].forEach(genr=>{
                               tasteprofile(genr,2)
@@ -414,6 +433,9 @@ window.addEventListener('DOMContentLoaded',async function(){
     document.querySelector('center-tab button[search]').addEventListener('click',function(){
         if(searchin.hasAttribute('full')){
             if(searchin.value.replaceAll(' ','')!=''){
+               let searches=JSON.parse(localStorage.getItem('searchhist'))
+               searches.push(searchin.value.replaceAll(' ','_').replaceAll('[','').replaceAll(']'))
+               localStorage.setItem('searchhist',JSON.stringify(searches))
                window.location.href=`search/?q=${searchin.value.replaceAll(' ','+')}`
             }
             searchin.removeAttribute('full')
