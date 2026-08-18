@@ -339,6 +339,12 @@ window.addEventListener('DOMContentLoaded',async function(){
                 main.append(title,infobar,plot,controlbar)
                 tab.setAttribute('closing','')
                 tab.append(main,more)
+                try{
+                    window.loader('h','h')
+                }
+                catch(e){
+                    console.error(e)
+                }
                 document.body.append(tab)
                 //savedlikes n shi
                 if(localStorage.getItem('user-interact')){
@@ -385,6 +391,29 @@ window.addEventListener('DOMContentLoaded',async function(){
            let head=document.createElement('h2')
            head.innerText=fill.getAttribute('name')
            head.setAttribute('sectitle','')
+           
+           //navigation
+           let right=document.createElement('button')
+           right.innerHTML='&#xF285;'
+           let left=document.createElement('button')
+           left.innerHTML='&#xF284;'
+           left.setAttribute('navigate','left')
+           right.setAttribute('navigate','right')
+           
+           if(fill.closest('scroller')){
+               fill.closest('scroller').setAttribute('pre','')        
+               fill.closest('scroller').append(left,right)            
+           }
+
+           right.addEventListener('click',function(){
+                fill.closest('scroller')?.removeAttribute('pre')
+                fill.scrollLeft+=(174.667 + 10) //av poster width
+           })
+           left.addEventListener('click',function(){
+                fill.scrollLeft-=(174.667 + 10) //av poster width
+           })
+           
+           
            console.log(`fetching ${api.api.start_url}${api.api.structure.pages[fill.getAttribute('fill')]}`)
            fetch(fetchpath).then(txt=>txt.json()).then(data=>{
             let filtered
@@ -431,6 +460,7 @@ window.addEventListener('DOMContentLoaded',async function(){
               contain.append(im,title)
               fill.append(contain)
               contain.addEventListener('click',()=>{
+                window.loader('loading','s')
                 if(manual){
                     let dict=api.api.other_apis.alltime_popular.structure.response
                      fetch(`${api.api.translator.replace('{type}','movies').replace('{imdb}',movie[dict.id_list][dict.id]).replace('{clientid}',api.api.other_apis.id_translator.clientid)}&app-name=OpenFlix&app-version=1.0&shareid=${linkid}`).then(text=>text.json()).then(res=>{
@@ -446,7 +476,12 @@ window.addEventListener('DOMContentLoaded',async function(){
               
             })
            })
-           fill.before(head)
+           if(!fill.closest('scroller')){
+            fill.before(head)
+           }
+           else{
+            fill.closest('scroller').before(head)
+           }
         })
     }
     })

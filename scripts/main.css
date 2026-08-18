@@ -41,12 +41,14 @@ body [sectitle]:first-of-type{
 section[fill]{
   display: flex;
   padding-left: 3px;
+  width: 100%;
   gap: 5px;
   align-items: center;
   scrollbar-width: thin;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  margin: 34px 27px;
+  scroll-behavior: smooth;
+  overflow: hidden;
+  /* margin: 34px 27px; */
+  position: relative;
   padding: 2px 0px;
   height: 270px;
   margin-top: 5px !important;
@@ -59,6 +61,9 @@ movie{
     overflow: clip;
     border: 1px solid #ffffff14;
     position: relative;
+}
+section > movie:first-of-type{
+    margin-left: 34px !important;
 }
 movie p{
     position: absolute;
@@ -818,4 +823,57 @@ splash p{
 splash[hiddenA]{
     opacity: 0;
     transition: 0.3s;
+}
+[navigate] {
+	position: absolute;
+	z-index: +9;
+	font-family: bootstrap-icons !important;
+	width: 28px;
+	border-radius: 50px;
+	height: 28px;
+    cursor: pointer;
+    transition: 0.3s;
+	border: none;
+	font-size: 18px;
+	padding: 4px;
+	box-sizing: content-box;
+	backdrop-filter: blur(8px) brightness(3);
+	background: #79797926;
+	color: #ffffff87;
+	box-shadow: 0px 0px 10px #00000085;
+}
+[navigate=left]{
+    left: 20px;
+}
+[navigate=right]{
+    right: 20px;
+}
+scroller{
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+}
+scroller::before,scroller::after{
+	width: 130px;
+	height: 100%;
+	position: absolute;
+    transition: 0.3s;
+    pointer-events: none;
+	content: '';
+	z-index: 8;
+}
+scroller::before{
+	background: linear-gradient(90deg,transparent,black);
+	right: 0;
+}
+scroller::after{
+	background: linear-gradient(90deg,black,transparent);
+	left: 0;
+}
+scroller[pre]::after{
+    width: 34px !important;
+}
+scroller[pre] [navigate='left']{
+    transform: scale(0);
 }
