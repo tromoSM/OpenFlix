@@ -20,13 +20,16 @@ window.addEventListener('DOMContentLoaded',function(){
                 }])
                 if(error){
                  console.error(`Failed to file incident report\n   Error : ${error}`)
+                 return 'couldnt be'
                 }
                 else{
                     console.log('incident report was filed')
+                    return 'was'
                 }
     }
     else{
         console.warn('Error when filing incident report : required values are missing to file an incident report')
+        return 'couldnt be'
     }
 }
 })

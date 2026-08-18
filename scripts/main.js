@@ -481,12 +481,19 @@ window.addEventListener('DOMContentLoaded',async function(){
               })
               
             })
-           }).catch(er=>{
+           }).catch(async er=>{
+            document.querySelector('splash p').innerText='Almost there'
+            let prog=document.querySelector('[loader="val"] val')
             let errtext=`error when fetching data from source :\n   url : ${fetchpath}\n   error : ${er}\n   culprit : might be from api rate limiting`
             console.error(errtext)
-            window.fileIncidentReport(errtext,true,fetchpath,'main',window.location)
+            const status=await window.fileIncidentReport(errtext,true,fetchpath,'main',window.location)
+            if(status){
+                document.querySelector('splash p').innerText='Error while loading data.'
+                console.log(`Incident report ${status} filed. Error will be resolved as soon as posible`)
+                await sleep(500)
+                document.querySelector('splash p').innerText=`Incident report ${status} filed.\nError will be resolved as soon as posible`
+            }    
             console.warn('Critical error : main features of openflix may not load.')
-            document.querySelector('splash p').innerText='Error while loading data. see console'
            })
            if(!fill.closest('scroller')){
             fill.before(head)
