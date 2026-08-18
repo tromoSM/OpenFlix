@@ -395,5 +395,5 @@ window.addEventListener('DOMContentLoaded',function(){
             console.log('ur good')
         }
     })
-
+    document.body.style.opacity='1'
 })

@@ -760,3 +760,15 @@ seperator{
   background: #ffffff0d;
   margin: 3px 0px;
 }
+windowmove{
+  display: block;
+  background: rgba(255, 255, 255, 0.123);
+  position: fixed;
+  width: 25px;
+  height: 25px;
+  transition: 0.3s all, 0.3s 0.2s border-radius;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  border-radius: 50px;
+}

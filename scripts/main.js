@@ -486,5 +486,25 @@ window.addEventListener('DOMContentLoaded',async function(){
             })
         })
     })
+    let pos=document.querySelector('[account]').getBoundingClientRect()
+    console.log(pos.x)
+    console.log(pos.y)
+    let originalbutton=document.querySelector('[link="account/"]').querySelector('button')
+    let animator=document.querySelector('windowmove')
+    animator.style.width=originalbutton.clientWidth+'px'
+    animator.style.height=originalbutton.clientHeight+'px'
+    animator.style.transform=`translate(${pos.x}px,${pos.y}px)`
 
+    document.querySelector('[link="account/"]').addEventListener('click',async function(ev){
+        animator.style.width='100vw'
+        animator.style.height='100vh'
+        animator.style.transform='none'
+        animator.style.borderRadius='0px'
+        animator.style.background='black'
+        animator.style.zIndex='+999999'
+        await sleep(500)
+        let a=document.createElement('a')
+        a.href='account/'
+        a.click()
+    })
 })
