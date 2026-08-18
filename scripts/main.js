@@ -355,7 +355,7 @@ window.addEventListener('DOMContentLoaded',async function(){
                 tab.removeAttribute('closing')
               }
 
-    fetch('sources/api.json').then(text=>text.json()).then(api=>{
+    fetch('sources/api.json').then(text=>text.json()).then(async api=>{
         let keyword=api.api.structure.response
         console.log(`using ${api.api.api.docs} [movie data]`)
         console.log(`endpoint => ${api.api.start_url} [movie data]`)
@@ -370,6 +370,7 @@ window.addEventListener('DOMContentLoaded',async function(){
         else{
         let genrrr=refreshtaste('You might like')
         console.log(`Recommending ${genrrr[0]} in feed. (personalized/${genrrr[1]})`)
+        let sectioncount=0
         document.querySelectorAll('section[fill]').forEach(fill=>{
           let fetchpath
           let manual=false
@@ -393,6 +394,11 @@ window.addEventListener('DOMContentLoaded',async function(){
             else{
                 filtered=data
             }
+            let total=16
+            let count=0
+            let imstart=performance.now()
+            let lastimload=performance.now()
+            let finished=false
             filtered.forEach(movie=>{
               let contain=document.createElement('movie')
               contain.setAttribute('openflixid',parseInt(movie.ids.tmdb)+67)
@@ -400,7 +406,25 @@ window.addEventListener('DOMContentLoaded',async function(){
               let title=document.createElement('p')
               title.innerText=movie.title
               im.src=String(api.api.structure.posters).replaceAll('{posterID}',movie[keyword.posterID])
-                
+
+              im.addEventListener('load',async function(){
+                count++
+                if(total==count){
+                    sectioncount+=1
+                    let secfinish=(performance.now()-lastimload).toFixed(2)
+                    console.log(`Loaded [${fill.getAttribute('name')}] posters :\n   preload wait : (${count}/${total})\n   fullload : (${count}/${filtered.length})\n   section : ${sectioncount}/${document.querySelectorAll('section[fill]').length}\n   took : ${secfinish}ms`)
+                    lastimload=performance.now()
+                }
+                if(sectioncount==document.querySelectorAll('section[fill]').length&&!finished){
+                    finished=true
+                    let finish=(performance.now()-imstart).toFixed(2)
+                    console.log(`Poster loading finished :\n   sections : ${document.querySelectorAll('section[fill]').length}\n   time took : ${finish}ms`)
+                    let splash=document.querySelector('splash')
+                    splash.setAttribute('hiddenA','')
+                    await sleep(200)
+                    splash.remove()
+                }
+              })
               //movieinfo tab
             
             //
@@ -496,6 +520,7 @@ window.addEventListener('DOMContentLoaded',async function(){
     animator.style.transform=`translate(${pos.x}px,${pos.y}px)`
 
     document.querySelector('[link="account/"]').addEventListener('click',async function(ev){
+        animator.style.transition=' 0.3s all, 0.3s 0.2s border-radius'
         animator.style.width='100vw'
         animator.style.height='100vh'
         animator.style.transform='none'
@@ -508,3 +533,4 @@ window.addEventListener('DOMContentLoaded',async function(){
         a.click()
     })
 })
+

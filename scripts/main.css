@@ -766,9 +766,56 @@ windowmove{
   position: fixed;
   width: 25px;
   height: 25px;
-  transition: 0.3s all, 0.3s 0.2s border-radius;
   left: 0;
   top: 0;
   z-index: -1;
   border-radius: 50px;
+}
+splash{
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+    flex-direction: column;
+	background: black;
+	z-index: +99999;
+	top: 0;
+	left: 0;
+    gap: 17px;
+}
+splash img{
+    mix-blend-mode: luminosity;
+}
+splash flex{
+  position: relative;
+  display: flex;
+}
+splash loader{
+  width: 209px;
+  height: 100px;
+  background: linear-gradient(90deg,transparent,red,transparent);
+  mix-blend-mode: color;
+  position: absolute;
+  left: 0%;
+  animation:  loader 4s infinite; 
+}
+@keyframes loader{
+    from{
+        transform: translateX(-110%);
+    }
+    to{
+        transform: translateX(110%);
+    }
+}
+splash p{
+  text-transform: uppercase;
+  font-size: 11px;
+  mix-blend-mode: luminosity;
+  color: #575757;
+}
+splash[hiddenA]{
+    opacity: 0;
+    transition: 0.3s;
 }
