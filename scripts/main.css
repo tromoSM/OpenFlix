@@ -877,3 +877,21 @@ scroller[pre]::after{
 scroller[pre] [navigate='left']{
     transform: scale(0);
 }
+prog{
+  height: 5px;
+  width: 196px;
+  background: #fff0;
+  border-radius: 50px;
+  border: 1px solid #ffffff14;
+  position: relative;
+  mix-blend-mode: luminosity;
+}
+prog val{
+  width: 1%;
+  transition: 0.3s;
+  height: 100%;
+  display: block;
+  background: #ffffff82;
+  border-radius: 50px;
+  mix-blend-mode: luminosity;
+}

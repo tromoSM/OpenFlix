@@ -2,6 +2,9 @@ window.addEventListener('DOMContentLoaded',async function(){
     function sleep(dih){
         return new Promise(resolve=>setTimeout(resolve,dih))
     }
+    //devmode
+    let splashmaintain=false
+    
     
     let accinfotype='Local'
     let autopage=new URLSearchParams(window.location.search).get('page/')
@@ -438,6 +441,7 @@ window.addEventListener('DOMContentLoaded',async function(){
 
               im.addEventListener('load',async function(){
                 count++
+                document.querySelector('[loader="val"] val').style.width=`${((total*sectioncount)/(total*document.querySelectorAll('section[fill]').length))*100}%`
                 if(total==count){
                     sectioncount+=1
                     let secfinish=(performance.now()-lastimload).toFixed(2)
@@ -447,11 +451,13 @@ window.addEventListener('DOMContentLoaded',async function(){
                 if(sectioncount==document.querySelectorAll('section[fill]').length&&!finished){
                     finished=true
                     let finish=(performance.now()-imstart).toFixed(2)
-                    console.log(`Poster loading finished :\n   sections : ${document.querySelectorAll('section[fill]').length}\n   time took : ${finish}ms`)
                     let splash=document.querySelector('splash')
-                    splash.setAttribute('hiddenA','')
-                    await sleep(200)
-                    splash.remove()
+                    if(!splashmaintain){
+                        await sleep(300)//transition
+                        splash.setAttribute('hiddenA','')
+                        await sleep(200)
+                        splash.remove()
+                    }
                 }
               })
               //movieinfo tab
