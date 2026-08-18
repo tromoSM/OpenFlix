@@ -250,6 +250,7 @@ plot{
   color: #ffffffed;
   backdrop-filter:blur(31px) brightness(1.7);
   font-size: 15px;
+  text-shadow: 0px 0px 10px #000000a8;
 }
 fullwindow[info] playcontrol button{
   background: #ffffff24;

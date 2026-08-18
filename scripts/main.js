@@ -481,6 +481,10 @@ window.addEventListener('DOMContentLoaded',async function(){
               })
               
             })
+           }).catch(er=>{
+            console.error(`error when fetching data from source :\n   url : ${fetchpath}\n   error : ${er}`)
+            console.warn('Critical error : main features of openflix may not load.')
+            document.querySelector('splash p').innerText='Error while loading data. see console'
            })
            if(!fill.closest('scroller')){
             fill.before(head)
