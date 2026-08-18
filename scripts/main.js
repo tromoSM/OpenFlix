@@ -482,7 +482,9 @@ window.addEventListener('DOMContentLoaded',async function(){
               
             })
            }).catch(er=>{
-            console.error(`error when fetching data from source :\n   url : ${fetchpath}\n   error : ${er}`)
+            let errtext=`error when fetching data from source :\n   url : ${fetchpath}\n   error : ${er}\n   culprit : might be from api rate limiting`
+            console.error(errtext)
+            window.fileIncidentReport(errtext,true,fetchpath,'main',window.location)
             console.warn('Critical error : main features of openflix may not load.')
             document.querySelector('splash p').innerText='Error while loading data. see console'
            })
