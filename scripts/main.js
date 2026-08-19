@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded',async function(){
     }
     //devmode
     let splashmaintain=false
-    
+    let debug=false
     
     let accinfotype='Local'
     let autopage=new URLSearchParams(window.location.search).get('page/')
@@ -214,10 +214,30 @@ window.addEventListener('DOMContentLoaded',async function(){
                             tasteprofile(genr,2)
                         })
                     }
+                    let trailerobj
+                    if(movie[keyword.trailer]){
+                        trailerobj=movie[keyword.trailer]
+                        console.log(`[trailer] Playing trailer (single)`)
+                    }
+                    else if(movie[keyword.trailer_list]){
+                        if(typeof movie[keyword.trailer_list]=='object'){
+                            trailerobj=movie[keyword.trailer_list][0][keyword.trailer_listYTId]
+                            console.log(`[trailer] Multiple trailers found for ${movie.title}. Chose 1st trailer by index:\n   trailers : `)
+                            movie[keyword.trailer_list].forEach(trailerr=>{
+                                console.log('     '+trailerr[keyword.trailer_listtitle])
+                            })
+                            console.log(`   chose : ${movie[keyword.trailer_list][0][keyword.trailer_listtitle]}`)
+                        }
+                    }
                     let trailerwindow=document.createElement('iframewindow')
                     trailerwindow.innerHTML=`
-<iframe src="https://www.youtube.com/embed/${movie[keyword.trailer]}" title="${movie.title} trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+<iframe src="https://www.youtube.com/embed/${trailerobj}" title="${movie.title} trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
                     let trailerclose=document.createElement('button')
+                    console.log(`[${movie.title}] Watching trailer : https://www.youtube.com/embed/${trailerobj}`)
+                    if(debug==true){
+                        console.log(`[debug] trailer for ${movie.title}\n`)
+                        console.log(movie)
+                    }
                     trailerclose.setAttribute('back','')
                     trailerclose.addEventListener('click',async function(){
                         trailerwindow.setAttribute('closing','')

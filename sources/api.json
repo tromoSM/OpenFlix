@@ -34,6 +34,9 @@
                 "trailer":"trailer",
                 "id_list":"ids",
                 "imdb":"imdb",
+                "trailer_list":"trailers",
+                "trailer_listtitle":"name",
+                "trailer_listYTId":"youtube",
                 "translator":{
                     "similar":"users_recommendations",
                     "similar_response":{
