@@ -576,7 +576,7 @@ window.addEventListener('DOMContentLoaded',async function(){
             refreshtab()
             document.querySelectorAll(`section:not([${currenttab}])`)?.forEach(tabs=>{
                 tabs.setAttribute('hiddenA','')
-                tabs.previousElementSibling.setAttribute('hiddenA','')
+                tabs.closest('scroller').previousElementSibling.setAttribute('hiddenA','')
             })
             document.querySelectorAll(`section[${currenttab}]`)?.forEach(tabs=>{
                 tabs.previousElementSibling?.removeAttribute('hiddenA')
