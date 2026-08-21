@@ -37,6 +37,10 @@
                 "trailer_list":"trailers",
                 "trailer_listtitle":"name",
                 "trailer_listYTId":"youtube",
+                "rating_list":"ratings",
+                "rating":"imdb",
+                "rating_type":"rating",
+                "release_date_type":["MM","DD","YYYY","/"],
                 "translator":{
                     "similar":"users_recommendations",
                     "similar_response":{

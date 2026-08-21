@@ -4,8 +4,9 @@ window.addEventListener('DOMContentLoaded',async function(){
     }
     //devmode
     let splashmaintain=false
-    let debug=false
-    
+    let debug=true
+    let debugLevel='all' //all=anoyin shi
+    let expectednRepeatederrorLog='no'
     let accinfotype='Local'
     let autopage=new URLSearchParams(window.location.search).get('page/')
     let linkid=new URLSearchParams(window.location.search).get('id/')
@@ -85,6 +86,157 @@ window.addEventListener('DOMContentLoaded',async function(){
         }
         console.log(`opening page:\n   type: ${autopage_type}\n   id type: ${idtype}\n   ${idtype}_id: ${idstarter}${autopage.slice(1)}`)
     }
+
+
+    //slides
+    let movieindex=0
+    let slideRunning=true
+    let currenSlideID=''
+    //to read
+    document.querySelector('newshi').addEventListener('mouseenter',async function(){
+        slideRunning=false
+        document.querySelector('newshi pos').setAttribute('stopped','')
+        if(debug&&debugLevel=='all'){
+            console.log('[experience] Slide rotation stopped because the user was interacting with a slide')
+        }
+        let paused=document.createElement('button')
+        paused.setAttribute('perfrounded','')
+        paused.innerHTML='<i class="bi bi-pause-fill"></i>'
+        paused.setAttribute('hiddenA','')
+        document.querySelector('newshi').append(paused)
+        await sleep(200)
+        paused?.removeAttribute('hiddenA')
+    })
+    document.querySelector('newshi').addEventListener('mouseleave',async function(){
+        slideRunning=true
+        document.querySelector('newshi pos')?.removeAttribute('stopped')
+        if(debug&&debugLevel=='all'){
+            console.log('[experience] Slide rotation resumed after the user stopped interacting with it.')
+        }
+        document.querySelector('newshi button[perfrounded]')?.setAttribute('hiddenA','')
+        await sleep(200)
+        document.querySelector('newshi button[perfrounded]')?.remove()
+    })
+    document.querySelector('newshi [parents]').addEventListener('click',function(){
+            let a=document.createElement('a')
+            a.target='_blank'
+            console.log(`[page] Opening parents guide :\n   imdb : ${currenSlideID}\n   link : "https://www.imdb.com/title/${currenSlideID}/parentalguide/"`)
+            a.href=`https://www.imdb.com/title/${currenSlideID}/parentalguide/?ref_=openflix_che`
+            a.click()
+            a.remove()
+    })
+    document.querySelector('newshi [watch]').addEventListener('click',function(){
+        let fetchedEl=document.querySelector(`[openflixid_="${parseInt(currenSlideID.replaceAll('t',''))+67}"]`)
+        if(fetchedEl){
+            fetchedEl.click()
+            console.log(`[page] Opening tab via tab (prefetch):\n   type : select by id\n   openflixid_ : ${parseInt(currenSlideID.replaceAll('t',''))+67}`)
+        }
+        else{
+            if(debug){
+                console.log(`[page] Opening tab via url (no prefetch):\n   type : m\n   openflixid_ : ${parseInt(currenSlideID.replaceAll('t',''))+67}`)
+                window.href=`${window.location.origin}?page/=m${currenSlideID.replaceAll('t','')}`
+            }
+        }
+    })
+    //
+    function refreshslide(){
+        if(document.querySelectorAll('newshi scroll img').length==0){
+            console.warn('[slides] Slides missing or still loading. Skipping refresh')
+            return
+        }
+        let title=document.querySelector('[info="title"]')
+        let rating=document.querySelector('[info="rating"]')
+        if(debug&&debugLevel=='all'){
+            console.log(`refreshing slide ${movieindex} -> ${movieindex+1}`)
+        }
+        let scrollcont=document.querySelector('newshi scroll')
+        let movie=document.querySelectorAll('newshi scroll img')[movieindex]
+        function updateposition(){
+            document.querySelectorAll('newshi pos poscircle').forEach((pos,index)=>{
+                if(index==movieindex-1){
+                    pos.setAttribute('now','')            
+                }
+                else{
+                    pos?.removeAttribute('now')
+                }
+            })
+        }
+        if(movieindex==0){
+                movieindex=1
+                let first=true
+                document.querySelectorAll('newshi scroll img').forEach(pos=>{
+                    let position=document.createElement('poscircle')
+                    if(first){
+                        position.setAttribute('now','')
+                        first=false
+                    }
+                    document.querySelector('newshi pos').append(position)
+                })
+        }
+        else if(movieindex==document.querySelectorAll('newshi scroll img').length){
+            scrollcont.scrollLeft=0
+            movieindex=1
+            updateposition()
+        }
+        else{
+            scrollcont.scrollLeft+=(movie.clientWidth)
+            movieindex+=1
+
+            updateposition()
+        }
+        const currentImage=document.querySelectorAll('newshi scroll img')[movieindex-1]
+        let titl=currentImage.getAttribute('name')
+        title.innerHTML= `
+  <span hiddenB>${titl}</span>
+  <svg aria-hidden="true"  head hiddenB>
+    <clipPath id="newshiblurmask">
+      <text dominant-baseline="hanging" text-anchor="start" x="0" y="0em" dy="0.125em">${titl}</text>
+    </clipPath>
+  </svg>
+`
+        currenSlideID=currentImage.getAttribute('id')
+        document.querySelector('genres').innerHTML=''
+        currentImage.getAttribute('genre').split(',').slice(0,3).forEach((genre,index)=>{
+            let genr=document.createElement('genre')
+            if(index!=2){ //max-1
+                genre=genre+' ∙ '
+            }
+            genr.innerText=genre
+            document.querySelector('genres').append(genr)
+        })
+        if(currentImage.hasAttribute('rating')&&currentImage.getAttribute('rating')!=undefined){
+            rating.innerText=currentImage.getAttribute('rating')        
+        }
+        else{
+            console.log(`Rating missing for ${currentImage.getAttribute('name')}`)
+        }
+    }
+    let declaredHidden=false
+    let declaredInteraction=false
+    function autorefresh(){
+        setInterval(()=>{
+            if(document.visibilityState=='visible'&&slideRunning){
+                refreshslide()
+                declaredInteraction=false
+                declaredHidden=false
+            }
+            else{
+                if(!declaredHidden){
+                    if(document.visibilityState=='hidden'){
+                        console.log('[performance] Slides not visible to user : stopping slides from refreshing')
+                        declaredHidden=true
+                    }
+                    else{
+                        if(!declaredHidden&&debug&&debugLevel=='all'){
+                            console.log('[performance] SlideRunning is paused because the user is interacting with a slide or because its hidden by a tab')
+                            declaredInteraction=true
+                        }
+                    }
+                }
+            }
+        },2500)
+    }
+
     let config
     let searchapi
     fetch('sources/config.json').then(text=>text.json()).then(configins=>{
@@ -111,8 +263,12 @@ window.addEventListener('DOMContentLoaded',async function(){
                 backdrop.addEventListener('load',function(){
                     backdrop.setAttribute('loaded','')
                 })
+                //slides
+                slideRunning=false
+                //
                 if(!trueback){
                     back.addEventListener('click',async function(){
+                        slideRunning=true
                         tab.setAttribute('closing','')
                         document.querySelector('title').innerHTML=oldtitle
                         await sleep(200)
@@ -366,7 +522,16 @@ window.addEventListener('DOMContentLoaded',async function(){
                     window.loader('h','h')
                 }
                 catch(e){
-                    console.error(e)
+                    console.error(`Failed to remove loader :\n   fallback : trying to remove loader directly\n   error : ${e}`)
+                    try{
+                        document.querySelectorAll('notify').forEach(loader=>{
+                            loader.remove()
+                        })
+                        console.warn('Removed loader directly via force.(success)')
+                    }
+                    catch(er){
+                        console.error(`Tried to remove loader directly :\n   status : failed\n   error : ${er}\n   no-force-attempt : ${e}`)
+                    }
                 }
                 document.body.append(tab)
                 //savedlikes n shi
@@ -403,6 +568,7 @@ window.addEventListener('DOMContentLoaded',async function(){
         document.querySelectorAll('section[fill]').forEach(fill=>{
           let fetchpath
           let manual=false
+
           if(fill.getAttribute('fill').slice(0,2)=='//'){
             let genre=genrrr[0]
             manual=true
@@ -451,17 +617,64 @@ window.addEventListener('DOMContentLoaded',async function(){
             let imstart=performance.now()
             let lastimload=performance.now()
             let finished=false
+
+            let specialscount=0
+            let specialstotal=5
+
             filtered.forEach(movie=>{
               let contain=document.createElement('movie')
-              contain.setAttribute('openflixid',parseInt(movie.ids.tmdb)+67)
+              try{
+                  contain.setAttribute('openflixid',parseInt(movie.ids.tmdb)+67)
+              }
+              catch(er){
+                 console.error(`Error when assigning openflixid to movie shortcut :\n   movie : ${movie.title}\n   culprit : tmdbID might not exist\n   error : ${er}`)
+              }
+              try{
+                  contain.setAttribute('openflixid_',parseInt(movie[keyword.id_list][keyword.imdb].replaceAll('t',''))+67)
+              }
+              catch(er){
+                if(debug&&debugLevel=='all'&&expectednRepeatederrorLog=='all'){
+                 console.error(`Error when assigning openflixid to movie shortcut :\n   movie : ${movie.title}\n   culprit : imdb might not exist\n   error : ${er}`)
+                }
+              }
               let im=document.createElement('img')
               let title=document.createElement('p')
               title.innerText=movie.title
               im.src=String(api.api.structure.posters).replaceAll('{posterID}',movie[keyword.posterID])
-
+              //slide
+              if(fill.getAttribute('fill')=='movies/today/popular'&&fill.getAttribute('filter')=='movies'){
+                if(specialscount!=specialstotal){
+                    console.log(movie)
+                    specialscount++
+                    let slidewrap=document.querySelector('newshi scroll')
+                    let slide=document.createElement('img')
+                    slide.src=String(api.api.structure.backdrops).replaceAll('{backdropID}',movie[keyword.backdropID])
+                    slide.setAttribute('name',movie.title)
+                    slide.setAttribute('desc',movie[keyword.plot])
+                    slide.setAttribute('genre',movie[keyword.genre_list].join(','))
+                    slide.setAttribute('id',movie[keyword.id_list][keyword.imdb])
+                    try{
+                        slide.setAttribute('rating',movie[keyword.rating_list][keyword.rating][keyword.rating_type])
+                        if(debug){
+                            console.log(`[slides] Rating found for ${movie.title}:\n   rating : ${JSON.stringify(movie[keyword.rating_list][keyword.rating][keyword.rating_type])}\n   rating list (str): ${JSON.stringify(movie[keyword.rating_list])}`)
+                        }
+                    }
+                    catch(er){
+                        console.error(`Error was raised when trying to access rating from movie :\n   movie : ${movie.title}\n   error : ${er}`)
+                        if(debug){
+                            console.log('[debug] rating for slides')
+                            console.log(movie)
+                        }
+                    }
+                    slidewrap.append(slide)
+                }
+              }
+              //
               im.addEventListener('load',async function(){
                 count++
-                document.querySelector('[loader="val"] val').style.width=`${((total*sectioncount)/(total*document.querySelectorAll('section[fill]').length))*100}%`
+                if(document.querySelector('[loader="val"] val')){
+                    document.querySelector('[loader="val"] val').style.width=`${((total*sectioncount)/(total*document.querySelectorAll('section[fill]').length))*100}%`                
+                }
                 if(total==count){
                     sectioncount+=1
                     let secfinish=(performance.now()-lastimload).toFixed(2)
@@ -472,11 +685,20 @@ window.addEventListener('DOMContentLoaded',async function(){
                     finished=true
                     let finish=(performance.now()-imstart).toFixed(2)
                     let splash=document.querySelector('splash')
-                    if(!splashmaintain){
-                        await sleep(300)//transition
+                    try{
+                     if(!splashmaintain){
+                       if(splash){
+                        await sleep(300)//loaderfinish
                         splash.setAttribute('hiddenA','')
-                        await sleep(200)
+                        await sleep(200)//outro
                         splash.remove()
+                        refreshslide()
+                        autorefresh()
+                       }
+                     }
+                    }
+                    catch(er){
+                        console.error(`Error when removing splash :\n   culprit : splash might already be removed\n   error : ${er}`)
                     }
                 }
               })

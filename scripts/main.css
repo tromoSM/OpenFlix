@@ -35,7 +35,7 @@ p,h1,h2,h3,h4{
 header img{
     height: 37px;
 }
-body [sectitle]:first-of-type{
+newshi{
     margin-top: 75px !important; /*header*/
 }
 section[fill]{
@@ -211,12 +211,12 @@ fullwindow[info] [head]{
     top: -9999px;
     left: -9999px;
   }
-  fullwindow[info] h1{
+  fullwindow[info] h1,newshi h1{
     backdrop-filter: blur(14px) brightness(2.3);
     background: #ffffff0d;
-    clip-path: url(#blurmask);
-    height: 80px;
   }
+  fullwindow[info] h1{clip-path: url(#blurmask);height: 80px;}
+  newshi h1{clip-path: url(#newshiblurmask);height: 57px;}
 }
 fullwindow[info]{
     display: flex;
@@ -896,3 +896,165 @@ prog val{
   border-radius: 50px;
   mix-blend-mode: luminosity;
 }
+newshi{
+  width: 95%;
+  overflow: hidden;
+  margin: auto;
+  border-radius: 47px;
+  display: flex;
+  height: 394px;
+  position: relative;
+}
+scroll{
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+    scroll-behavior: smooth;
+}
+scroll img {
+	width: 100%;
+	flex-shrink: 0;
+	object-fit: cover;
+	object-position: top;
+}
+pos{
+    position: absolute;
+    right: 0;
+    display: flex;
+    gap: 5px;
+    bottom: 0;
+    margin: 25px;
+}
+pos poscircle {
+	display: block;
+	width: 10px;
+	height: 10px;
+	border: 1px solid #ffffff2e;
+	border-radius: 50px;
+    background-color: #0000002a;
+}
+pos poscircle[now]{
+	box-shadow: 0px 0px 15px #000000a1;
+    position: relative;
+    animation: jump-in 0.5s;
+}
+@keyframes jump-in{
+    from,to{
+        transform: scale(1);
+    }
+    50%{
+        transform: scale(1.5);
+    }
+}
+pos poscircle[now]::after{
+    content: '';
+    width: 10px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 10px;
+    border-radius: 50px;
+	backdrop-filter: brightness(2) blur(10px);
+}
+pos poscircle[now]:not(poscircle:last-child)::before{
+    content: '';
+    width: 10px;
+	backdrop-filter: brightness(2) blur(10px);
+    height: 100%;
+    border-radius: 50px;
+    position: absolute;
+    left: 0;
+    will-change: transform,width;
+    top: 0;
+    animation: next 3s;
+}
+pos[stopped] poscircle[now]:not(poscircle:last-child)::before{
+    animation-play-state: paused;
+}
+@keyframes next{
+    from{
+        width: 10px;
+        transform: none;
+    }
+    70%{
+        width: 27px;
+        transform: none;
+    }
+    to{
+        transform: translateX(15px);
+        width: 10px;
+    }
+}
+newshi infobar {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	margin: 25px;
+	display: flex;
+	flex-direction: column;
+}
+subinfo {
+	display: flex;
+	padding: 2px 8px;
+	gap: 3px;
+	color: #ffffffa3;
+	width: fit-content;
+}
+subinfo p{
+	color: #ffffffa3;
+}
+control-bar {
+	margin: 15px 0px;
+}
+control-bar button {
+	padding: 5px 15px;
+	border-radius: 50px;
+    cursor: pointer;
+	border: none;
+	font-size: 16px;
+	font-family: inherit;
+	background: #ffffff1f;
+	backdrop-filter: blur(20px);
+	color: white;
+	text-shadow: 0px 0px 10px #00000073;
+}
+newshi [head]{
+  font: 50px inter, sans-serif;
+  font-weight: 900;
+}
+p:has([info="rating"]) {
+	background: #ffffff12;
+	border-radius: 50px;
+	padding: 0px 7px;
+	font-size: 12px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	gap: 3px;
+	backdrop-filter: blur(14px);
+}
+[perfrounded]{
+    width: 30px;
+    height: 30px;
+    border-radius: 50px;
+    backdrop-filter: blur(25px);
+    color: white;
+    border: none;
+    background: rgba(0, 0, 0, 0.116);
+    transition: 0.3s;
+}
+[perfrounded][hiddenA]{
+    transform: scale(1.1);
+    filter: blur(10px);
+    opacity: 0;
+}
+
+newshi [perfrounded]{
+    font-size: 20px;
+    box-sizing: content-box;
+    padding: 5px;
+    position: absolute;
+    right: 25px;
+    top: 25px;
+} 
