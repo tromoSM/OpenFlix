@@ -18,11 +18,9 @@ window.addEventListener('DOMContentLoaded',function(){
                     type:types
                 }])
                 if(error){
-                 console.error(`Failed security checkup (health).\n   Error : ${JSON.stringify(error)}`)
                  return 'succeeded'
                 }
                 else{
-                    console.log('incident report was filed')
                     return 'failed'
                 }
     }

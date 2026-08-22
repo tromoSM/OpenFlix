@@ -54,7 +54,6 @@ window.addEventListener('DOMContentLoaded',function(){
         }
 
     }
-
     fetch('../scripts/openflix/originalstate.json').then(txt=>txt.json()).then(b=>{
         let modify
         let modifyX
@@ -91,7 +90,7 @@ window.addEventListener('DOMContentLoaded',function(){
             }
             else{
                 console.error(`${"O"+"p"+"e"+"n"+"F"+"l"+"i"+"x"+" "+"s"+"e"+"c"+"u"+"r"+"i"+"t"+"y"+" "+"e"+"r"+"r"+"o"+"r"} : some of the code has been modified from its trusted state.\n   section : ${a.closest('section').getAttribute('id')}\n   formID : ${a.getAttribute('subject')}`)
-                aff.push(a.getAttribute())
+                aff.push(a.getAttribute('subject'))
                 types.push('propety')
                 modify=true
                 sec.push(a.closest('section').getAttribute('id'))
@@ -100,10 +99,9 @@ window.addEventListener('DOMContentLoaded',function(){
         }).then(t=>{
         if(modify){
            window.healthCheckup(aff,sec,window.location,'main',types).then(checkup=>{
-               if(modify){
+               console.log(`checkup complete. status : ${checkup} `)
                war=war+'<br>'+b.int.replaceAll(':o:a:x:r','').replaceAll('::','\n').replaceAll('{host}',window.location.host)
                ref()
-               }
            })
         }
         })
@@ -306,6 +304,63 @@ window.addEventListener('DOMContentLoaded',function(){
                         await sleep(1000)
                         window.loader('h','h')
                      }
+                     else if(resetwhat=='update'){
+                        let supported=window.IsUpdateSupported()
+                        if(!supported){
+                            console.log('Update is not supported')
+                            reset.setAttribute('disabledA','')
+                            document.querySelector('[hiddenA="noupdate"]')?.removeAttribute('hiddenA')
+                        }
+                         else{
+                        if(window.checkForUpdates){
+                           window.checkForUpdates(true).then(async status=>{
+                            if(typeof status=='object'){
+                                if(String(status[0]).toLowerCase()=='update available'){
+                                 let alertX=document.createElement('alert')
+                                 let controlbarX=document.createElement('controls')
+                                 let cancelX=document.createElement('button')
+                                 cancelX.innerText='Cancel'
+                                 let okX=document.createElement('button')
+                                 okX.innerText='Download'
+                                 let messageX=document.createElement('p')
+                                 let mestitleX=document.createElement('h3')
+                                 mestitleX.innerText='Update available'
+                                 messageX.innerHTML=`a new version of openflix is available.<br>Do you want to download it now?<br><br><strong left>v${status[1].version}${status[1].beta?" • beta": ""}${status[1].securitypatch?" (security patch)":""}</strong><span new> new features : <br><span x>• ${status[1].features.join('</span><br><span x>• ')}`
+                                 okX.addEventListener('click',async function(){
+                                  window.loader('downloading','s')
+                                   let a=document.createElement('a')
+                                   a.href=status[1].url
+                                   a.target='_blank'
+                                   a.click()
+
+                                    alertX.setAttribute('hiddenA','')
+                                    await sleep(300)
+                                    alertX.remove()
+                                    window.loader('h','h')
+                                 })
+                                 cancelX.addEventListener('click',async function(){
+                                    alertX.setAttribute('hiddenA','')
+                                    await sleep(300)
+                                    alertX.remove()
+                                    console.log('canceled')
+                                 })
+                                 controlbarX.append(cancelX,okX)
+                                 alertX.append(mestitle,messageX,controlbarX)
+                                 alertX.setAttribute('hiddenA','')
+                                 document.body.append(alertX)
+                                 await sleep(200)
+                                 alertX.removeAttribute('hiddenA')
+                                }
+                            }
+                          })
+                         }
+                        else{
+                            window.fail('error')
+                        }
+                        }
+
+
+                     }
                      //end
                      else{
                         console.warn(`Action could not be found : ${resetwhat}`)
@@ -415,4 +470,5 @@ window.addEventListener('DOMContentLoaded',function(){
         }
     })
     document.body.style.opacity='1'
+
 })

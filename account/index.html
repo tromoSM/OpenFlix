@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="../scripts/main.css">
         <link rel="stylesheet" href="../scripts/ui/sys.css">
         <link rel="stylesheet" href="../scripts/ui/loader.css">
+        <script src="../scripts/openflix/updater.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie.min.js"></script>
         <script src="../scripts/ui/sys.js"></script>
@@ -28,6 +29,7 @@
             <item>Account stats</item>
             <item>Recommendations</item>
             <item>History</item>
+            <item>Check for updates</item>
             <seperator></seperator>
             <item>Data & privacy</item>
             <item>Contact Us</item>
@@ -62,7 +64,12 @@
                 <bar>Search history</bar>
                </shistory>
                <button usemar reset="history" war="This action will reset all your search history.">Reset search history</button>
-            </section> b
+            </section>
+            <section id="check_for_updates">
+               <h1><i class="bi bi-arrow-counterclockwise"></i> Check for updates</h1>
+               <p bio hiddenA="noupdate" usemar>check for updates feature is disabled on this specific openflix package. your openflix package doesnt have local files to be updated so it'll forever be up to date automatically.</p>
+               <button usemar reset="update" what="update" noalert>Check for updates</button>
+            </section>
             <section id="data_&_privacy">
                <h1><i class="bi bi-shield-shaded"></i> Data & Privacy</h1>
                <p bio usemar>We may use analytics to understand how the app is used and improve the experience. Some movie recommendations may be personalized based on the movies you watch and interact with, including your likes, searches, watchlist, and viewing history. Your recommendations, history, searches, stats, likes, and watchlists are stored only locally on your device and are not stored on our servers. We do not sell or share this locally stored information with third parties.</p>

@@ -1058,3 +1058,47 @@ newshi [perfrounded]{
     right: 25px;
     top: 25px;
 } 
+[accountpg] section {
+    padding-bottom: 40px;
+	border-bottom: 1px solid #0f0f0f;
+}
+section h1 {
+	padding-top: 51px;
+}
+[accountpg] [bio][hiddenA]{
+    height: 0px;
+    opacity: 0;
+    overflow: hidden;
+    transition: 0.2s;
+}
+[reset][disabledA]{
+    opacity: 0.5;
+    pointer-events: none;
+}
+[accountpg] alert p span[new]{
+  text-align: left;
+  width: 95%;
+  display: block;
+  background: #ffffff12;
+  margin: 0px 7px;
+  border-radius: 8px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  max-height: 100px;
+  overflow-x: scroll;
+  scrollbar-width: none;
+}
+[accountpg] alert p span[new] [x]{
+    margin-left: 14px;
+    color: #ffffff7d;
+}
+[accountpg] alert p span[new] > [x]:first-of-type{
+    margin-top: 5px;
+    display: inline-block;
+}
+[accountpg] alert p strong[left]{
+    text-align: left;
+    width: 100%;
+    margin: 3px 10px;
+    display: block;
+}
