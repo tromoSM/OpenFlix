@@ -57,6 +57,10 @@ window.addEventListener('DOMContentLoaded',function(){
 
     fetch('../scripts/openflix/originalstate.json').then(txt=>txt.json()).then(b=>{
         let modify
+        let modifyX
+        let aff=[]
+        let types=[]
+        let sec=[]
         fetch('../scripts/openflix/identity.json').then(tx=>tx.json()).then(id=>{
             document.querySelectorAll('[ex-fill]').forEach(ex=>{
                 let iden=id.openflix[ex.getAttribute('ex-fill')]
@@ -64,16 +68,22 @@ window.addEventListener('DOMContentLoaded',function(){
                     ex.innerHTML=iden
                 }
                 else{
-                    war=war+'<br>'+b.int.replaceAll(':o:a:x:r','').replaceAll('::','\n').replaceAll('{host}',window.location.host)
-                    ref()
+                    modify=true
+                    types.push('ex-fill-programinfo')
+                    sec.push(ex.closest('section').getAttribute('id'))
+                    aff.push(ex.getAttribute('ex-fill'))
                     console.error(`${"O"+"p"+"e"+"n"+"F"+"l"+"i"+"x"+" "+"s"+"e"+"c"+"u"+"r"+"i"+"t"+"y"+" "+"e"+"r"+"r"+"o"+"r"} : some of the code has been modified from its trusted state.\n   section : ${ex.closest('section').getAttribute('id')}\n   formID : ${ex.getAttribute('ex-fill')}`)
                 }
             })
-        })
+        }).then(a=>{
+
         document.querySelectorAll('[infopage] a:has(button)').forEach(a=>{
             if(a.hasAttribute('href')){
                 modify=true
                 console.error(`${"O"+"p"+"e"+"n"+"F"+"l"+"i"+"x"+" "+"s"+"e"+"c"+"u"+"r"+"i"+"t"+"y"+" "+"e"+"r"+"r"+"o"+"r"} : some of the code has been modified from its trusted state.\n   section : ${a.closest('section').getAttribute('id')}\n   formID : ${a.getAttribute('subject')}`)
+                aff.push(a.getAttribute('subject'))
+                sec.push(a.closest('section').getAttribute('id'))
+                types.push('href')
                 a.removeAttribute('href')
             }
             else if(a.getAttribute('link')==b[a.getAttribute('subject')].replaceAll(':o:a:x:r','').replaceAll('::','\n')){
@@ -81,13 +91,22 @@ window.addEventListener('DOMContentLoaded',function(){
             }
             else{
                 console.error(`${"O"+"p"+"e"+"n"+"F"+"l"+"i"+"x"+" "+"s"+"e"+"c"+"u"+"r"+"i"+"t"+"y"+" "+"e"+"r"+"r"+"o"+"r"} : some of the code has been modified from its trusted state.\n   section : ${a.closest('section').getAttribute('id')}\n   formID : ${a.getAttribute('subject')}`)
+                aff.push(a.getAttribute())
+                types.push('propety')
                 modify=true
+                sec.push(a.closest('section').getAttribute('id'))
             }
         })
+        }).then(t=>{
         if(modify){
-           war=war+'<br>'+b.int.replaceAll(':o:a:x:r','').replaceAll('::','\n').replaceAll('{host}',window.location.host)
-           ref()
+           window.healthCheckup(aff,sec,window.location,'main',types).then(checkup=>{
+               if(modify){
+               war=war+'<br>'+b.int.replaceAll(':o:a:x:r','').replaceAll('::','\n').replaceAll('{host}',window.location.host)
+               ref()
+               }
+           })
         }
+        })
         
     }).catch(err=>{
         console.error(err)
