@@ -828,5 +828,8 @@ window.addEventListener('DOMContentLoaded',async function(){
         a.href='account/'
         a.click()
     })
+    if(!window.profiledata){
+            const rep=await window.fileIncidentReport('Profile check is missing',true,'no fetchpath : profile.js missing','main',window.location)
+    }
 })
 
