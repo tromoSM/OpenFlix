@@ -32,6 +32,7 @@
             <item>Check for updates</item>
             <seperator></seperator>
             <item>Data & privacy</item>
+            <item>Legal</item>
             <item>Contact Us</item>
             <item>OpenFlix info</item>
         </aside>
@@ -73,12 +74,21 @@
             </section>
             <section id="data_&_privacy">
                <h1><i class="bi bi-shield-shaded"></i> Data & Privacy</h1>
-               <p bio usemar>We may use analytics to understand how the app is used and improve the experience. Some movie recommendations may be personalized based on the movies you watch and interact with, including your likes, searches, watchlist, and viewing history. Your recommendations, history, searches, stats, likes, and watchlists are stored only locally on your device and are not stored on our servers. We do not sell or share this locally stored information with third parties.</p>
+               <p bio usemar>Your data is stored locally on your device by default. If you sign in, your locally stored data will be synchronized with your cloud account while you remain logged in. You can export, import, or delete your local data at any time. Cloud data can be deleted separately from local data. For more information, please see our Privacy Policy.</p>
                 
                <button reset="export" what="export" usemar="left">export data</button>
                <input type="file" accept=".openflix" hidden importfile>
                <button reset="import" what="import" noalert war="this will overwrite the current data with the new data you're about to import. This action cannot be undone.">import data</button>
-               <button reset="reset all" warn="Erasing all data" extra war="This will reset all the data of your account including recommendation, history, preferences, likes and others. Export your data before erasing. This action cannot be undone.">Reset all data</button>
+               <button reset="reset all" warn="Erasing all data" extra war="This will reset all the data of your account including recommendation, history, preferences, likes and others. Export your data before erasing. This action cannot be undone.">Reset all data (local)</button>
+               <br>
+               <button usemar="left" what="logout" reset="logout" noalert warn="Logging out" war="You're about to be logged out from your account. If you don't have access to your google account, you might lose your data. After logout your data will still be stored locally.//br Click 'Reset all data (locally)' remove the local data." accountstate="cloud">Logout</button>
+               <button reset="deletecloud" what="delete" noalert warn="Erasing user data from cloud" accountstate="cloud" war="This action will delete your userdata from openflix servers with no backups. After deletion your data will still be stored locally. Click 'Reset all data (local)' to also delete local data. This action cannot be undone." extra>Delete account from cloud</button>
+            </section>
+            <section id="legal" infopage>
+               <h1><i class="bi bi-file-earmark-text-fill"></i> Legal</h1>
+               <a bio usemar="left" href="../legal/#tos">terms of service</a><br>
+               <a bio usemar href="../legal/#privacy">privacy policy</a><br>
+               <a bio usemar href="../legal/#trademark">Openflix Trademark & Branding Policy</a>
             </section>
             <section id="contact_us" infopage>
                <h1><i class="bi bi-person-add"></i>Contact Us</h1>

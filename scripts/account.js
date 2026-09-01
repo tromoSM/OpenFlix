@@ -33,6 +33,11 @@ window.addEventListener('DOMContentLoaded',function(){
         window.success('imported')
         localStorage.removeItem('backupimported')
     }
+    if(localStorage.getItem('account')!='cloud'){
+        document.querySelectorAll('[accountstate="cloud"]').forEach(onlycloudactions=>{
+            onlycloudactions.remove()
+        })
+    }
     document.querySelectorAll('[fill]').forEach(fill=>{
         fill.innerText=localStorage[fill.getAttribute('fill')]
     })
@@ -361,6 +366,92 @@ window.addEventListener('DOMContentLoaded',function(){
 
 
                      }
+                     else if(resetwhat=='logout'){
+                        if(localStorage.getItem('account')=='cloud'){
+                            const { error } = await supabase.auth.signOut()
+                            if(error){
+                                window.fail('logout failed')
+                                console.error(error)
+                            }
+                            else{
+                                console.log('logging out was successful.\nYour local data is still stored on your browser locally. to clear local data click "reset all data (local)".')
+                                localStorage.setItem('account','local')
+                                window.success('success')
+                            }
+                        }
+                        else{
+                            let alertX=document.createElement('alert')
+                            let controlbarX=document.createElement('controls')
+                            let cancelX=document.createElement('button')
+                            cancelX.innerText='ok'
+                            let messageX=document.createElement('p')
+                            let mestitleX=document.createElement('h3')
+                            mestitleX.innerText='Logout failed'
+                            messageX.innerText=`Your account type is not eligible for logout.\nOnly cloud based account are eligible for logout.\nYour account type : ${localStorage.getItem('account')}`
+                            cancelX.addEventListener('click',async function(){
+                             alertX.setAttribute('hiddenA','')
+                             await sleep(300)
+                             alertX.remove()
+                             console.log('canceled')
+                            })
+                            controlbarX.append(cancelX)
+                            alertX.append(mestitle,messageX,controlbarX)
+                            alertX.setAttribute('hiddenA','')
+                            document.body.append(alertX)
+                            await sleep(200)
+                            alertX.removeAttribute('hiddenA')
+                            return
+                        }
+                     }
+                     else if(resetwhat=='deletecloud'){
+                        if(localStorage.getItem('account')=='cloud'){
+                            const {data:userData,error:userErr}=await supabase.auth.getUser()
+                            if(userErr){
+                                console.error(userErr)
+                                return
+                            }
+
+                            const {data,error}=await supabase
+                           .from('OpenFlix_userdata')
+                           .delete()
+                           .eq('user_id',userData.user.id)
+                           console.log(data)
+                            const { error:logouterr }=await supabase.auth.signOut()
+                            if(error||logouterr){
+                                window.fail('deletion failed')
+                                if(error){console.log('action failed : user data deletion');console.log(error)}
+                                if(logouterr){console.log('action failed : logout from session');console.log(error)}
+                            }
+                            else{
+                                console.log('user data deletion was successful.\nYour local data is still stored on your browser locally. to clear local data click "reset all data (local)".')
+                                localStorage.setItem('account','local')
+                                window.success('success')
+                            }
+                        }
+                        else{
+                            let alertX=document.createElement('alert')
+                            let controlbarX=document.createElement('controls')
+                            let cancelX=document.createElement('button')
+                            cancelX.innerText='ok'
+                            let messageX=document.createElement('p')
+                            let mestitleX=document.createElement('h3')
+                            mestitleX.innerText='Deletion failed'
+                            messageX.innerText=`Your account type is not eligible for user data deletion.\nOnly cloud based account are eligible for user data deletion.\nYour account type : ${localStorage.getItem('account')}`
+                            cancelX.addEventListener('click',async function(){
+                             alertX.setAttribute('hiddenA','')
+                             await sleep(300)
+                             alertX.remove()
+                             console.log('canceled')
+                            })
+                            controlbarX.append(cancelX)
+                            alertX.append(mestitle,messageX,controlbarX)
+                            alertX.setAttribute('hiddenA','')
+                            document.body.append(alertX)
+                            await sleep(200)
+                            alertX.removeAttribute('hiddenA')
+                            return
+                        }
+                     }
                      //end
                      else{
                         console.warn(`Action could not be found : ${resetwhat}`)
@@ -368,9 +459,6 @@ window.addEventListener('DOMContentLoaded',function(){
                      if(!noalert){
                      if(!reset.hasAttribute('what')){
                       window.success('reset successful')
-                     }
-                     else{
-                        window.success(`${reset.getAttribute('what')} succesful`)
                      }
                      }   
 
@@ -397,7 +485,7 @@ window.addEventListener('DOMContentLoaded',function(){
                 controlbar.append(cancel,ok)
                 if(reset.hasAttribute('war')){
                     let message=document.createElement('p')
-                    message.innerText=reset.getAttribute('war')
+                    message.innerText=reset.getAttribute('war').replaceAll('//br','\n')
                     alert.append(mestitle,message,controlbar)
                 }
                 else{

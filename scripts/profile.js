@@ -20,7 +20,6 @@ window.addEventListener('DOMContentLoaded',async function(){
             alertX.style.transition='none'
             resetcount=0
             alertX.setAttribute('erregg','')
-            mestitleX.innerText="Guess what?"
             await sleep(4500)
             mestitleX.innerText="What's your name"
             alertX.removeAttribute('erregg')
@@ -45,7 +44,7 @@ window.addEventListener('DOMContentLoaded',async function(){
            return  
          }
         resetcount=0
-        window.loader('downloading','s')
+        window.loader('creating profile','s')
         const {error}=await window.supabase
                 .from("OpenFlix_users")
                 .insert([{
@@ -74,6 +73,57 @@ window.addEventListener('DOMContentLoaded',async function(){
         })
         controlbarX.append(okX)
         alertX.append(mestitleX,messageX,maininput,controlbarX)
+        alertX.setAttribute('user','')
+        alertX.setAttribute('hiddenA','')
+        document.body.append(alertX)
+        await sleep(200)
+        alertX.removeAttribute('hiddenA')
+    }
+    if(!localStorage.getItem('user')){
+        let alertX=document.createElement('alert')
+        let controlbarX=document.createElement('controls')
+        let okX=document.createElement('button')
+        okX.innerText='Enter'
+        let messageX=document.createElement('p')
+        let mestitleX=document.createElement('h3')
+        mestitleX.innerText="Terms and conditions"
+        messageX.innerHTML='I have read and agree to the <a href="legal/#tos">OpenFlix terms of service</a> and acknowledge <a href="legal/#privacy">the privacy policy</a>.'
+        const check=document.createElement('input')
+        check.type='checkbox'
+        const agreed=new Date()
+        okX.addEventListener('click',async function(){
+            if(check.checked){
+                 window.loader('creating profile','s')
+                 const {error}=await window.supabase.from('OpenFlix_useragreements').insert([{
+                    username:localStorage.getItem('username'),
+                    agreement_text:messageX.innerText,
+                    localtime:agreed
+                 }])      
+                if(error){
+                    window.fail('an error occured')
+                }
+                else{
+                    alertX.setAttribute('hiddenA','')
+                    await sleep(300)
+                    alertX.remove()
+                    localStorage.setItem('user',agreed) 
+                }
+                window.loader('h','h')
+            }
+            else{
+                alertX.setAttribute('error','')
+                await sleep(300)
+                alertX.removeAttribute('error')
+            }
+        })
+        controlbarX.append(okX)
+        const flex=document.createElement('flxR')
+        flex.addEventListener('click',()=>{
+            check.click()
+        })
+        flex.append(check,messageX)
+        alertX.append(mestitleX,flex,controlbarX)
+        alertX.setAttribute('legal','')
         alertX.setAttribute('hiddenA','')
         document.body.append(alertX)
         await sleep(200)

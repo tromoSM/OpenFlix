@@ -31,7 +31,7 @@ window.addEventListener('DOMContentLoaded',async function(){
     if(!localStorage.getItem('searchhist')){
         localStorage.setItem('searchhist',JSON.stringify([]))
     }
-    function tasteprofile(genre,add){
+    function tasteprofile(genre,add,calledby='taste profile updating'){
         let profile=JSON.parse(localStorage.getItem('taste-profile'))
         if(profile[genre]){
             profile[genre]=Number(profile[genre])+Number(add)
@@ -40,10 +40,12 @@ window.addEventListener('DOMContentLoaded',async function(){
             profile[genre]=Number(add)
         }
         localStorage.setItem('taste-profile',JSON.stringify(profile))
+        window.SyncToCloud(`[taste profile] ${calledby}`) 
     }
     function addwatched(){
         let watched=Number(localStorage.getItem('watchd'))
         localStorage.setItem('watchd',watched+1)
+        window.SyncToCloud('new watched item')
     }
     function refreshtaste(refreshedby=''){
         let highest=0
@@ -326,6 +328,14 @@ window.addEventListener('DOMContentLoaded',async function(){
                         let liked=JSON.parse(localStorage.getItem('user-interact'))
                          let type=act.getAttribute("action")
                             if(act.hasAttribute('actived')){
+                                movie[keyword.genre_list].forEach(genre=>{
+                                    if(act==dislike){
+                                        tasteprofile(genre,+3,'user interactions')
+                                    }
+                                    else{
+                                        tasteprofile(genre,-3,'user interactions')
+                                    }
+                                })
                                 try{
                                     delete liked[movie[keyword.id_list][keyword.imdb].replaceAll('t','')][type]
                                     localStorage.setItem('user-interact',JSON.stringify(liked))
@@ -336,6 +346,14 @@ window.addEventListener('DOMContentLoaded',async function(){
                                 }
                             }
                             else{
+                                movie[keyword.genre_list].forEach(genre=>{
+                                    if(act==dislike){
+                                        tasteprofile(genre,-3,'user interactions')
+                                    }
+                                    else{
+                                        tasteprofile(genre,+3,'user interactions')
+                                    }
+                                })
                                 try{
                                    let intr
                                    if(liked[movie[keyword.id_list][keyword.imdb].replaceAll('t','')]){
@@ -360,10 +378,10 @@ window.addEventListener('DOMContentLoaded',async function(){
                                 catch(er){
                                     console.error(er)
                                 }
+                                // window.SyncToCloud('user interactions')    
                             
-                    }})
+                    }}) 
                 })
-
                 trailer.addEventListener('click',async function(){
                     if(movie[keyword.genre_list]){
                         movie[keyword.genre_list].forEach(genr=>{
@@ -754,6 +772,7 @@ window.addEventListener('DOMContentLoaded',async function(){
         if(searchin.hasAttribute('full')){
             if(searchin.value.replaceAll(' ','')!=''){
                let searches=JSON.parse(localStorage.getItem('searchhist'))
+               window.SyncToCloud('search history')
                searches.push(searchin.value.replaceAll(' ','_').replaceAll('[','').replaceAll(']'))
                localStorage.setItem('searchhist',JSON.stringify(searches))
                window.location.href=`search/?q=${searchin.value.replaceAll(' ','+')}`
@@ -832,4 +851,3 @@ window.addEventListener('DOMContentLoaded',async function(){
             const rep=await window.fileIncidentReport('Profile check is missing',true,'no fetchpath : profile.js missing','main',window.location)
     }
 })
-

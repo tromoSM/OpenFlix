@@ -545,6 +545,9 @@ right{
   cursor: pointer;
   will-change: transform;
   transition: 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
 }
 [account]:active{
@@ -607,12 +610,14 @@ statbox{
 }
 statbox p,[bio]{
   font-size: 12px;
-  color: #fffefe7a;
+}
+[bio]{
+  color: #fffefe7a !important;
 }
 statbox p[big]{
   font-size: 23px;
   font-weight: 600;
-  color: white;
+  color: white !important;
 }
 stats{
     display: flex;
@@ -741,13 +746,13 @@ alert h3{
     color: #ffa3a3;
     transition: 0.2s;
 }
-legal a,legal a:hover,legal a:active,legal:visited{
+legal a,legal a:hover,legal a:active,legal:visited,[legalpg] a:link,[legalpg] a:visited,[legalpg] a,#legal a:link,#legal a{
     color: inherit;
 }
 main > section:first-of-type h1{
     padding-top: 135px;
 }
-[accountpg] h1[title]{
+[accountpg] h1[title],[legalpg] h1[title]{
     margin-top: 60px !important;
     position: fixed;
 }
@@ -1148,3 +1153,80 @@ alert[erreggend]{
         filter: brightness(30);
     }
 }
+button[account] img{
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50px;
+}
+button[sign] {
+	background: #ffffff21;
+	color: white;
+	border: none;
+	border-radius: 50px;
+	font-family: inherit;
+	font-size: 13px;
+	padding: 0px 9px;
+	margin-right: 4px;
+	cursor: pointer;
+}
+/*legalpg*/
+[legalpg] span[pathsep] {
+	color: #d81927;
+	transform: translateY(-3px);
+	display: inline-block;
+	margin: 5px;
+	font-weight: bold;
+	font-size: 18px;
+}
+[legalpg] header .bi.bi-file-earmark-text-fill {
+	color: #da1927;
+	display: inline-block;
+	transform: translateY(-2px);
+}
+[legalpg] h1 {
+	color: white;
+	position: relative !important;
+	border-bottom: 1px solid #0f0f0f;
+	margin-bottom: 10px !important;
+	padding-bottom: 10px;
+}
+[legalpg] h2{
+    margin-left: 20px;
+    text-transform: capitalize;
+	padding-bottom: 10px;
+	margin-top: 10px ;
+}
+[legalpg] section[id]{
+	border-bottom: 1px solid #0f0f0f;
+    border-radius: 35px;
+    padding-bottom: 20px;
+}
+[bio="legal"]{font-size: 13px;}
+[bio="legal"] span[sectitle] {
+	display: inline-block;
+	margin: 9px 0px 10px 0px;
+	font-weight: 600;
+}
+[legalpg] section[selected]{
+    animation: selected-sec 1s 3;
+}
+@keyframes selected-sec{
+    from,to{
+        background: transparent;
+    }
+    50%{
+    background: #ffffff0a;
+    }
+}
+flxr {display: flex;margin-right: 10px;cursor: pointer;}
+flxr p{user-select: none;}
+flxr p a:link,flxr p a:visited,flxr p a{color: inherit;}
+alert:has(flxr){
+    width: fit-content;
+    max-width: 32%;
+}
+flxr input{
+    accent-color: #dc1a28;
+}
+alert[user]{z-index: 999999;}
