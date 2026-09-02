@@ -1230,3 +1230,21 @@ flxr input{
     accent-color: #dc1a28;
 }
 alert[user]{z-index: 999999;}
+tooltip {
+	position: fixed;
+	left: 0;
+	top: 0;
+	background: #0f0f0feb;
+	font-size: 11px;
+    pointer-events: none;
+	max-width: 310px;
+	padding: 5px 9px;
+	border-radius: 12px;
+	backdrop-filter: blur(10px);
+    transition: 0.2s;
+	color: #ffffffb0;
+	box-shadow: 0px 0px 10px black;
+}
+[q]{
+    cursor: pointer;
+}

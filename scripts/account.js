@@ -557,6 +557,22 @@ window.addEventListener('DOMContentLoaded',function(){
             console.log('ur good')
         }
     })
+    fetch('../sources/vendor.json').then(txt=>txt.json()).then(vendorinfo=>{
+        document.querySelectorAll('[v-fill]').forEach(v=>{
+            const asked=vendorinfo[v.getAttribute('v-fill')]
+            if(asked){
+                if(asked.replaceAll(' ','')!=''){
+                    v.innerText=asked
+                    return
+                }
+                v.innerText='vendor hasnt provided this information.'
+            }
+            else{
+                v.innerText='not found'
+                console.error(`can't find vendor information : ${v.getAttribute('v-fill')}`)
+            }
+        })
+    })
     document.body.style.opacity='1'
 
 })

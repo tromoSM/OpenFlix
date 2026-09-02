@@ -14,6 +14,7 @@
         <script src="../scripts/ui/sys.js"></script>
         <script src="../scripts/openflix/incidents.js"></script>
         <script src="../scripts/account.js"></script>
+        <script src="../scripts/tooltipsources.js"></script>
     </head>
     <body style="opacity:0;transition: 0.3s;">
         <header>
@@ -103,6 +104,9 @@
                 <h3 bio><span>Platform : </span><span ex-fill="platform"></span></h3>
                 <seperator></seperator>
                 <h3 bio><span>Data provider : </span><span ex-fill="data_provider"></span></h3>
+                <br>
+                <h3 bio><span>Media vendor <i class="bi bi-question-circle-fill" q="vendor"></i> : </span><span v-fill="vendor">loading data</span></h3>
+                <h3 bio><span>Vendor contact <i class="bi bi-question-circle-fill" q="vendor"></i> : </span><span v-fill="vendor_contact">loading data</span></h3>
                 
                 <legal usemar="left" bio hidden>
                     <a href="../legal/#tos">terms of service</a>
