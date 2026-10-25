@@ -1,0 +1,139 @@
+:root{
+	--main-vibrant-text: white;
+}
+@media (max-width:647px){
+center-tab {
+	position: fixed;
+	width: fit-content;
+	margin-top: 99px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+header {
+	grid-template-columns: 1fr 1fr;
+    background: #000000e8;
+}
+tabs,center-tab [search],center-tab input[searchin][full]{background: #161616;color: white;}
+tab::before{background: #ffffff17;}
+center-tab:has(input[searchin][full]) button[search]{background: #2d2d2d;}
+
+newshi h1{
+    font-size: 35px;
+}
+newshi subinfo{font-size: 12px;}
+control-bar {
+	margin: 15px 0px;
+	display: flex;
+	width: 90%;
+    gap: 6px;
+	margin-bottom: 0;
+}
+newshi {
+	margin-top: 100px !important;
+}
+pos{
+	margin: 80px 25px;
+}
+control-bar button {
+	width: 100%;
+	background: #00000026;
+	padding: 10px 0px;
+}
+newshi infobar{
+	padding-top: 70px;
+}
+center-tab:has([searchin][full]) {
+	width: 75% !important;
+	height: 40px;
+	transition: 0.2s;
+	padding: 0px 5px;
+	left: calc(50% - 20px);
+}
+}
+@media(max-width:975px){
+fullwindow[info] h1 {
+	backdrop-filter: none;
+	clip-path: none;
+	background: none;
+	height: fit-content;
+}
+fullwindow[info] h1 span {
+	position: relative !important;
+	top: 0px !important;
+	left: 0px !important;
+	font-size: xxx-large;
+	color: var(--main-vibrant-text) !important;
+	font-weight: 900;
+	text-shadow: 0px 0px 25px #0000006b;
+}
+fullwindow[info] h1 svg {
+	display: none;
+}
+}
+@media(max-width:475px){
+fullwindow[info] playcontrol{
+  display: flex;
+  flex-wrap: wrap;
+}
+fullwindow[info] playcontrol button[main],fullwindow[info] playcontrol button[side]{
+	flex: 0 0 45vw;
+	width: 45vw;
+}
+plot{
+	width: 93%;
+	max-width: 93%;
+}
+}
+@media (pointer:coarse){
+	[navigate]{
+		transform: scale(0) !important;
+	}
+	scroller::before{
+		background: linear-gradient(90deg,transparent 52%,#000000fa);
+	}
+	scroller::after{background: none;}
+}
+@media(max-width:663px){
+/* aside {
+	width: 98vw !important;
+	height: fit-content !important;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	background: #ffffff12 !important;
+	backdrop-filter: blur(15px);
+	display: block !important;
+}
+item {
+	display: inline-block;
+	border-radius: 50px !important;
+	margin: 3px 0px;
+} */
+aside{display: none !important;}
+[accountpg] main {
+	margin-left: 14px;
+}
+}
+@media(max-width:1142px){
+alert {
+	width: fit-content !important;
+	max-width: 40% !important;
+}
+}
+@media(max-width:621px){
+alert {
+	max-width: 70% !important;
+}
+}
+@media(max-width:569px){
+alert {
+	max-width: 70% !important;
+	width: max-content !important;
+}
+}
+@media(max-width:424px){
+pos {
+	right: 0;
+	top: 0;
+	margin: 25px;
+}
+}

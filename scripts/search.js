@@ -14,22 +14,31 @@ window.addEventListener('DOMContentLoaded',async function(){
     try{
         if(searchapi){
             fetch('../sources/api.json').then(text=>text.json()).then(api=>{
+                window.loader('loading','s')
                 let searchapix=api.api.searchapi
                 fetch(`${searchapix.start_url}${search.replaceAll(searchapix.space_character)}&apikey=${searchapi}`).then(text=>text.json()).then(results=>{
                     let imdb=searchapix.structure.response.imdb
                     let result=results[searchapix.structure.response.results]
                     if(result){
+                        try{
+                            window.loader('h','h')
+                        }
+                        catch(er){}
                         console.log(`search finished. found ${result.length} results`)
                         let sectitle=document.createElement('h2')
                         sectitle.setAttribute('sectitle','')
-                        sectitle.innerText=`Found ${result.length} results for ${search.replaceAll(searchapix.space_character,' ')}`
+                        sectitle.innerText=`Found ${result.length} results for "${search.replaceAll(searchapix.space_character,' ')}"`
                         document.querySelector('[fill=search]').before(sectitle)
                         result.forEach(movie=>{
                             let cont=document.createElement('movie')
                             let pos=document.createElement('img')
                             let sub=document.createElement('p')
+                            cont.setAttribute('hiddenA','')
                             sub.innerText=movie[searchapix.structure.response.title]
                             pos.src=movie[searchapix.structure.response.poster]
+                            pos.addEventListener('load',function(){
+                                cont?.removeAttribute('hiddenA','')
+                            })
                             cont.append(pos,sub)
                             let type
                             if(movie[searchapix.structure.response.type]==searchapix.structure.response.type_movie){
@@ -46,6 +55,12 @@ window.addEventListener('DOMContentLoaded',async function(){
 
                     }
                     else{
+                        try{window.loader('h','h')}
+                        catch(er){}
+                        const errormsg=document.createElement('p')
+                        errormsg.setAttribute('errormsg','')
+                        errormsg.innerHTML=`Couldnt find any results for "${search}" (${results[searchapix.structure.response.error_message]})`
+                        document.querySelector('[fill="search"]').append(errormsg)
                         console.error(`search failed : ${results[searchapix.structure.response.error_message]} `)
                         
                     }

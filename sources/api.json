@@ -8,7 +8,7 @@
             "by":"https://simkl.com",
             "docs":"https://api.simkl.org/api-reference"
         },
-        "translator":"https://api.simkl.com/{type}/{imdb}/?client_id={clientid}",
+        "translator":"https://api.simkl.com/{type}/{imdb}?client_id={clientid}",
         "start_url":"https://data.simkl.in/discover/",
         "for":"recommendations and images",
         "structure":{
@@ -45,9 +45,13 @@
                     "similar":"users_recommendations",
                     "similar_response":{
                         "id_list":"ids",
-                        "id":"simkl"
+                        "id":"simkl",
+                        "id_fallback":"simkl_id"
                     }
-                }
+                },
+                "type":"type",
+                "type_movie":"movie",
+                "type_series":"show"
             }
         },
         "searchapi":{
@@ -77,6 +81,25 @@
                     "response":{
                         "id":"simkl_id",
                         "id_list":"ids"
+                    }
+                }
+            },
+            "series_specific":{
+                "for":"info about seasons and episodes of series",
+                "structure":{
+                    "lookup":{
+                        "url":"https://api.tvmaze.com/lookup/shows?imdb={imdb}",
+                        "response":{
+                            "id":"id"
+                        }
+                    },
+                    "seasons":{
+                        "url":"https://api.tvmaze.com/shows/{id}/seasons",
+                        "response":{
+                            "episode_count":"episodeOrder",
+                            "image_list":"image",
+                            "image":"medium"
+                        }
                     }
                 }
             }

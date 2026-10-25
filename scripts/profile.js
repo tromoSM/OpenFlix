@@ -118,7 +118,7 @@ window.addEventListener('DOMContentLoaded',async function(){
         })
         controlbarX.append(okX)
         const flex=document.createElement('flxR')
-        flex.addEventListener('click',()=>{
+        flex.addEventListener('click',(ev)=>{
             check.click()
         })
         flex.append(check,messageX)

@@ -1,16 +1,71 @@
-window.signin=async()=>{
-    const {error}=await window.supabase.auth.signInWithOAuth({
+let signinOptions={redirectTo:window.location.origin,}
+let wrap_signinOptions={
+    skipBrowserRedirect:true,
+    redirectTo:window.location.origin+'/auth_callback/',
+}
+function sleep(dih){
+        return new Promise(resolve=>setTimeout(resolve,dih))
+}
+window.signin=async(method='google')=>{
+    if(window.isWrapped()){
+        signinOptions=wrap_signinOptions
+    }
+    const {data,error}=await window.supabase.auth.signInWithOAuth({
         provider:"google",
-        options:{
-            redirectTo:window.location.origin
-        }
+        options:signinOptions
     })
     if(error){
         console.error(error)
     }
+    if(data?.url){
+        if(window.isWrapped()){
+            const fullwindow=document.createElement('fullwindow')
+            fullwindow.setAttribute('auth','pre')
+            const title=document.createElement('h2')
+            title.innerText='Check your browser'
+            const des=document.createElement('p')
+            des.innerText=`We've opened a browser tab for you to sign into OpenFlix via ${method}. After signing in you'll return here`
+            const bgvec=document.createElement('i')
+            bgvec.classList='bi bi-person-fill'
+            const back=document.createElement('button')
+            back.setAttribute('back','')
+            back.addEventListener('click',function(){
+                fullwindow.remove()
+            })
+            const tryagain=document.createElement('button')
+            tryagain.innerHTML='try again'
+            tryagain.setAttribute('try','')
+            fullwindow.append(title,des,bgvec,back,tryagain)
+            fullwindow.setAttribute('closing','')
+            document.body.append(fullwindow)
+            function openurl(){window.open(data.url,'_blank')}
+            tryagain.addEventListener('click',openurl)
+            // openurl()
+            await sleep(300)
+            fullwindow.removeAttribute('closing')
+        }
+    }
 }
-
+window.sessionCode=async(code)=>{
+    const {data,error}=await window.supabase.auth.exchangeCodeForSession(code)
+    if(error){
+        console.error(error)
+    }
+    else{
+        window.checkauthstatus()
+        console.log('session for code successful')
+        document.querySelector('fullwindow[auth=pre]').setAttribute('closing','')
+        await sleep(300)
+        document.querySelector('fullwindow[auth=pre]').remove()
+        await sleep(100)
+        await window.authDone()
+        await sleep(300)
+        window.location.reload()
+    }
+}
 window.checkauthstatus=async()=>{
+  try{
+   if(window.supabase.auth){
     const {data,error}=await window.supabase.auth.getSession()
     if(error){
         console.error(error)
@@ -23,8 +78,16 @@ window.checkauthstatus=async()=>{
     else{
         return false
     }
+  }
+  else{
+        return false
+  }
+  }
+  catch(er){
+    console.error(er)
+    return 'error'
+  }
 }
-
 async function refreshUserData(){
     const {data,error}=await supabase.auth.getUser()
     if(error){
@@ -47,6 +110,7 @@ async function refreshUserData(){
 }
 
 window.addEventListener('DOMContentLoaded',async function(){
+    await sleep(300) //keepts supabase script timeout
     const auth=await checkauthstatus()
     if(auth=='error'){
         window.fail('sign in error')

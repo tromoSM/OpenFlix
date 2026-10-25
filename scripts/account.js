@@ -18,6 +18,10 @@ window.addEventListener('DOMContentLoaded',function(){
         localStorage.setItem('user-interact',JSON.stringify({}))
         firsttime=true
     }
+    if(!localStorage.getItem('watchlist')){
+        localStorage.setItem('watchlist',JSON.stringify({}))
+        firsttime=true
+    }
     if(!localStorage.getItem('watchd')){
         localStorage.setItem('watchd',0)
         firsttime=true
@@ -318,6 +322,7 @@ window.addEventListener('DOMContentLoaded',function(){
                         }
                          else{
                         if(window.checkForUpdates){
+                           window.loader('checking','s')
                            window.checkForUpdates(true).then(async status=>{
                             if(typeof status=='object'){
                                 if(String(status[0]).toLowerCase()=='update available'){
@@ -330,6 +335,7 @@ window.addEventListener('DOMContentLoaded',function(){
                                  let messageX=document.createElement('p')
                                  let mestitleX=document.createElement('h3')
                                  mestitleX.innerText='Update available'
+                                 mestitle.innerHTML='Update available'
                                  messageX.innerHTML=`a new version of openflix is available.<br>Do you want to download it now?<br><br><strong left>v${status[1].version}${status[1].beta?" • beta": ""}${status[1].securitypatch?" (security patch)":""}</strong><span new> new features : <br><span x>• ${status[1].features.join('</span><br><span x>• ')}`
                                  okX.addEventListener('click',async function(){
                                   window.loader('downloading','s')
@@ -356,7 +362,44 @@ window.addEventListener('DOMContentLoaded',function(){
                                  await sleep(200)
                                  alertX.removeAttribute('hiddenA')
                                 }
+                                else{
+                                 let alertX=document.createElement('alert')
+                                 let controlbarX=document.createElement('controls')
+                                 let cancelX=document.createElement('button')
+                                 cancelX.innerText='Cancel'
+                                 let okX=document.createElement('button')
+                                 okX.innerText='Download'
+                                 let messageX=document.createElement('p')
+                                 let mestitleX=document.createElement('h3')
+                                 mestitle.innerHTML='Failed to check for updates'
+                                 mestitleX.innerText='Failed to check for updates'
+                                 messageX.innerHTML=status[0]
+                                 okX.addEventListener('click',async function(){
+                                  window.loader('downloading','s')
+                                   let a=document.createElement('a')
+                                   a.target='_blank'
+                                   a.click()
+
+                                    alertX.setAttribute('hiddenA','')
+                                    await sleep(300)
+                                    alertX.remove()
+                                    window.loader('h','h')
+                                 })
+                                 cancelX.addEventListener('click',async function(){
+                                    alertX.setAttribute('hiddenA','')
+                                    await sleep(300)
+                                    alertX.remove()
+                                    console.log('canceled')
+                                 })
+                                 controlbarX.append(cancelX)
+                                 alertX.append(mestitle,messageX,controlbarX)
+                                 alertX.setAttribute('hiddenA','')
+                                 document.body.append(alertX)
+                                 await sleep(200)
+                                 alertX.removeAttribute('hiddenA')
+                                }
                             }
+                            window.loader('h','h')
                           })
                          }
                         else{

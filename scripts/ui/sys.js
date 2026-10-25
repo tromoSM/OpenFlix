@@ -83,6 +83,35 @@ window.addEventListener("DOMContentLoaded",function(){
         }
     }
     }
+    
+    window.smallloader=async(state)=>{
+        state=String(state.toLowerCase())
+        if(state.startsWith('s')){
+            const notify=document.createElement('sloader')
+            const spinner=document.createElement('div')
+            spinner.className='spinner'       
+            for(let ind=1;ind<13;ind++){
+                const eachspinner=document.createElement("div")
+                eachspinner.className=`bar${ind}`
+                spinner.appendChild(eachspinner)
+            }
+            notify.append(spinner)
+            notify.setAttribute('closing','')
+            document.body.append(notify)
+            await sleep(300)
+            notify.removeAttribute('closing')
+        }
+        else{
+            if(document.querySelector('sloader')){
+                document.querySelectorAll('sloader').forEach(async sloader=>{
+                    sloader.setAttribute('closing','')
+                    await sleep(300)
+                    sloader.remove()
+                })
+            }
+        }
+    }
+
     window.success=async function(dihh){//must await users cro
         let temp$$el$$not=document.createElement(`notify`)
         let temp$$el$$spi=document.createElement('div')
@@ -178,5 +207,25 @@ window.addEventListener("DOMContentLoaded",function(){
       document.body.appendChild(temp$$a$$dih)
       temp$$a$$dih.setAttribute("tromoSM",'sys$hide')
       temp$$a$$dih.focus()  
+    }
+    window.authDone=async()=>{
+        //need bootstapicons
+        const wrapper=document.createElement('centernotification')
+        const icon=document.createElement('i')
+        wrapper.append(icon)
+        wrapper.setAttribute('closing','')
+        document.body.append(wrapper)
+        icon.classList='bi bi-person-fill'
+        await sleep(300)
+        wrapper.removeAttribute('closing')
+        await sleep(300)
+        icon.setAttribute('busy','')
+        await sleep(300)
+        icon.classList='bi bi-person-fill-check'
+        icon.removeAttribute('busy')
+        await sleep(800)
+        wrapper.setAttribute('closing','')
+        await sleep(300)
+        wrapper.remove()
     }
 })

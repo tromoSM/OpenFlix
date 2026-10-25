@@ -14,12 +14,21 @@
         <script src="../scripts/ui/sys.js"></script>
         <script src="../scripts/openflix/incidents.js"></script>
         <script src="../scripts/openflix/legalnavigator.js"></script>
+        <script src="../platform_specific/python/socket.io.min.js"></script> 
+        <script src="../scripts/wrappermanager.js"></script>
+        <script src="../scripts/wrapper_menu.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <header>
             <nav>
                 <a href="../"><img src="../assets/branding/header-logo.png"></a><span pathsep>/</span>
                 <a href="../legal/"><i class="bi bi-file-earmark-text-fill"></i></a>
+              <navigation wrapperonly>
+                <button nav="prev"><i class="bi bi-chevron-left"></i></button>
+                <button nav="next"><i class="bi bi-chevron-right"></i></button>
+                <button nav="reload"><i class="bi bi-arrow-clockwise"></i></button>
+              </navigation>
             </nav>
         </header>
         <h1 title><i class="bi bi-file-earmark-text-fill"></i> Legal</h1>

@@ -2,6 +2,9 @@ window.addEventListener('DOMContentLoaded',async function(){
     function sleep(dih){
         return new Promise(resolve=>setTimeout(resolve,dih))
     }
+    
+    window.performancemanager={blockingMainPage:false,performanceHeavy:false,calledBy:"<mainpage>:feed"}
+
     //devmode
     let splashmaintain=false
     let debug=true
@@ -30,6 +33,9 @@ window.addEventListener('DOMContentLoaded',async function(){
     }
     if(!localStorage.getItem('searchhist')){
         localStorage.setItem('searchhist',JSON.stringify([]))
+    }
+    if(!localStorage.getItem('watchlist')){
+        localStorage.setItem('watchlist',JSON.stringify({}))
     }
     function tasteprofile(genre,add,calledby='taste profile updating'){
         let profile=JSON.parse(localStorage.getItem('taste-profile'))
@@ -93,8 +99,22 @@ window.addEventListener('DOMContentLoaded',async function(){
     //slides
     let movieindex=0
     let slideRunning=true
+    window.isSlideRunning=slideRunning
     let currenSlideID=''
-    //to read
+    // //to read
+    // document.querySelector('newshi').addEventListener("mousemove",function(ev){
+    //     const pos=document.querySelector('newshi clickshi').getBoundingClientRect()
+    //     document.querySelector('newshi clickshi').style.transform=`translate(${ev.clientX - pos.width}px,${ev.clientY - pos.height}px)`
+    // })
+    // document.querySelector('newshi').addEventListener("mousedown",function(){
+    //     document.querySelector('newshi clickshi').style.transform=`translate(0px,0px) scale(2)`
+    //     document.querySelector('newshi clickshi').setAttribute('clicked','')
+    // })
+    // document.querySelector('newshi').addEventListener("mouseup",function(ev){
+    //     const pos=document.querySelector('newshi clickshi').getBoundingClientRect()
+    //     document.querySelector('newshi clickshi')?.removeAttribute('clicked')
+    //     document.querySelector('newshi clickshi').style.transform=`translate(${ev.clientX - pos.width}px,${ev.clientY - pos.height}px) scale(1)`
+    // })
     document.querySelector('newshi').addEventListener('mouseenter',async function(){
         slideRunning=false
         document.querySelector('newshi pos').setAttribute('stopped','')
@@ -120,12 +140,23 @@ window.addEventListener('DOMContentLoaded',async function(){
         document.querySelector('newshi button[perfrounded]')?.remove()
     })
     document.querySelector('newshi [parents]').addEventListener('click',function(){
+        if(!window.isWrapped()){
             let a=document.createElement('a')
             a.target='_blank'
             console.log(`[page] Opening parents guide :\n   imdb : ${currenSlideID}\n   link : "https://www.imdb.com/title/${currenSlideID}/parentalguide/"`)
             a.href=`https://www.imdb.com/title/${currenSlideID}/parentalguide/?ref_=openflix_che`
             a.click()
             a.remove()
+        }
+        else{
+            const name=this.closest('img[name]')?.getAttribute('name')
+            try{
+                window.tryopenurl(name,`https://www.imdb.com/title/${currenSlideID}/parentalguide/?ref_=openflix_che`)
+            }
+            catch(er){
+                window.open(`https://www.imdb.com/title/${currenSlideID}/parentalguide/?ref_=openflix_che`,'_blank')
+            }
+        }
     })
     document.querySelector('newshi [watch]').addEventListener('click',function(){
         let fetchedEl=document.querySelector(`[openflixid_="${parseInt(currenSlideID.replaceAll('t',''))+67}"]`)
@@ -141,6 +172,7 @@ window.addEventListener('DOMContentLoaded',async function(){
         }
     })
     //
+    const colorthief=window.ColorThief
     function refreshslide(){
         if(document.querySelectorAll('newshi scroll img').length==0){
             console.warn('[slides] Slides missing or still loading. Skipping refresh')
@@ -187,15 +219,10 @@ window.addEventListener('DOMContentLoaded',async function(){
             updateposition()
         }
         const currentImage=document.querySelectorAll('newshi scroll img')[movieindex-1]
+        // title.style.color=colorthief.getColorSync(currentImage).css('hsl')
         let titl=currentImage.getAttribute('name')
-        title.innerHTML= `
-  <span hiddenB>${titl}</span>
-  <svg aria-hidden="true"  head hiddenB>
-    <clipPath id="newshiblurmask">
-      <text dominant-baseline="hanging" text-anchor="start" x="0" y="0em" dy="0.125em">${titl}</text>
-    </clipPath>
-  </svg>
-`
+        title.querySelector('span').innerHTML=titl
+
         currenSlideID=currentImage.getAttribute('id')
         document.querySelector('genres').innerHTML=''
         currentImage.getAttribute('genre').split(',').slice(0,3).forEach((genre,index)=>{
@@ -215,12 +242,20 @@ window.addEventListener('DOMContentLoaded',async function(){
     }
     let declaredHidden=false
     let declaredInteraction=false
+    let declaredPerformanceCommand=false
     function autorefresh(){
         setInterval(()=>{
-            if(document.visibilityState=='visible'&&slideRunning){
+            if(document.visibilityState=='visible'&&slideRunning&&!document.querySelector('splash')){
                 refreshslide()
                 declaredInteraction=false
+                declaredPerformanceCommand=false
                 declaredHidden=false
+            }
+            else if(window.performancemanager.performanceHeavy||window.performancemanager.blockingMainPage){
+                if(!declaredPerformanceCommand){
+                    console.log(`[performance/command](slides) Heavy or non visible tasks are paused. Command sent by ${window.performancemanager.calledBy}. args :\n   heavy work in progress : ${window.performancemanager.performanceHeavy}\n   main page visible : ${window.performancemanager.blockingMainPage}`)
+                    declaredPerformanceCommand=true
+                }
             }
             else{
                 if(!declaredHidden){
@@ -253,15 +288,127 @@ window.addEventListener('DOMContentLoaded',async function(){
         }
     })
     const oldtitle=document.querySelector('title').innerHTML
-      async function openpage(movie,api,keyword,datatype='auto',data='',trueback=false){
+      async function openpage(movie,api,keyword,datatype='auto',data='',trueback=false,type='movies-fallback'){
+        let itemtype
+        if(movie[keyword.type]){
+            if(movie[keyword.type]==keyword.type_movie){
+                itemtype='movies'
+            }
+            else{
+                itemtype='series'
+            }
+        }
+        else if(type!='movies-fallback'){
+            if(type=='tv'){
+                itemtype='series'
+            }
+            else{
+                itemtype=type    
+            }
+        }
+                try{
+                    const currentID=movie[keyword.id_list][keyword.imdb]
+                    window.debug_currentID=currentID
+                    if(!currentID||currentID==''||currentID==undefined){
+                        console.warn(`Couldnt find debug_currentID for ${movie.title}. returned ${currentID}`)
+                    }
+                }
+                catch(e){
+                    console.error(`Error when posting debug info (${movie.title}) :\n${er}`)
+                }
                 document.querySelector('title').innerHTML=`${movie.title} - OpenFlix`
+                if(window.isWrapped()){
+                    window.wrapperSetTitle(`OpenFlix - ${movie.title}`)
+                }
                 let tab=document.createElement('fullwindow')
                 let main=document.createElement('section')
-                let backdrop=document.createElement('img')
+                const backdrop=document.createElement('img')
                 backdrop.setAttribute('backdrop','')
-                backdrop.src=String(api.api.structure.backdrops).replaceAll('{backdropID}',movie[keyword.backdropID])
-                let back=document.createElement('button')
+                const defaultBackdrop=String(api.api.structure.backdrops).replaceAll('{backdropID}',movie[keyword.backdropID])
+                if(window.innerWidth<=975){
+                 const bgbackdrop=document.createElement('img')
+                 bgbackdrop.style.visibility='hidden'
+                 bgbackdrop.style.opacity=0
+                 bgbackdrop.style.display='none'
+                 tab.append(bgbackdrop)
+                 bgbackdrop.setAttribute('crossorigin','anonymous')
+                 bgbackdrop.src=`https://corsproxy.io/?key=f9db3f34&image=1&imageWidth=640&imageHeight=360&imageFit=cover&imagePosition=center&imageFormat=auto&imageQuality=balanced&imageCompression=standard&url=${defaultBackdrop}`;
+                 bgbackdrop.addEventListener('load',function(){
+                  if(this.src!=defaultBackdrop){
+                    const colorthief=window.ColorThief
+                    const color=colorthief.getSwatchesSync(bgbackdrop)
+                    let output='white'
+                    let outputname='fallback'
+                    if(color.Vibrant){
+                        outputname='vibrant'
+                        output=`color-mix(${color.Vibrant.color.css()},white 65%)`
+                    }
+                    if(color.LightVibrant){
+                        outputname='lightvibrant'
+                        console.log(color.LightVibrant.color.css())
+                        output=`color-mix(${color.LightVibrant.color.css()},white)`
+                    }
+                    console.log(`using ${outputname} for text`)
+                    document.documentElement.style.setProperty('--main-vibrant-text',output)
+                  }
+                 })
+
+                }
+                backdrop.src=defaultBackdrop              
+                const back=document.createElement('button')
                 back.setAttribute('back','')
+                const moreopt=document.createElement('button')
+                moreopt.setAttribute('float','infomore')
+                moreopt.innerHTML='<i class="bi bi-three-dots"></i>'
+                let lastpos=`translate(100vw,100vh) scale(0)`
+                tab.addEventListener('click',async function(ev){
+                    if(!moreopt.contains(ev.target)&&!document.querySelector('floatmenu')?.contains(ev.target)){
+                       if( document.querySelector('floatmenu')){
+                        document.querySelector('floatmenu').style.transform=lastpos
+                        moreopt?.removeAttribute('hiddenA','')
+                        await sleep(300)
+                        document.querySelector('floatmenu').remove()   
+                       }
+                    }
+                })
+                moreopt.addEventListener('click',async function(ev){
+                    const menu=document.createElement('floatmenu')
+                    ;[['copy link','link-45deg'],['parents guide','box-arrow-up-right']].forEach(([action,icon])=>{
+                        const item=document.createElement('item')
+                        item.innerHTML=`<i class="bi bi-${icon}"></i> ${action}`
+                        item.addEventListener('click',async function(){
+                            if(action=='copy link'){
+                                try{
+                                   await navigator.clipboard.writeText(`${window.location.origin}?page/=m${window.debug_currentID.replaceAll('tt','')}&utm_source=oflx_copyinpage`)
+                                }
+                                catch(er){}
+                            }
+                            else if(action=='parents guide'){
+                                try{
+                                    if(window.isWrapped()){
+                                        window.tryopenurl(`OpenFlix (parent's guide)`,`https://www.imdb.com/title/${window.debug_currentID}/parentalguide/?ref_=openflix_che`)
+                                    }
+                                    else{
+                                        window.open(`https://www.imdb.com/title/${window.debug_currentID}/parentalguide/?ref_=openflix_che`,'_blank')
+                                    }
+                                }
+                                catch(er){}
+                            }
+                            menu.style.transform=`translate(calc(${moreopt.getBoundingClientRect().x}px - 93%), 23px) scale(0)`
+                            moreopt?.removeAttribute('hiddenA','')
+                            await sleep(300)
+                            menu.remove()
+                        })
+                        
+                        menu.append(item)
+                    })
+                    tab.append(menu)
+                    menu.style.transform=`translate(calc(${moreopt.getBoundingClientRect().x}px - 93%), 23px) scale(0) `
+                    lastpos=`translate(calc(${moreopt.getBoundingClientRect().x}px - 93%), 23px) scale(0) `
+                    moreopt.setAttribute('hiddenA','')
+                    await sleep(300)
+                    menu.style.transform=`translate(calc(${moreopt.getBoundingClientRect().x}px - 87%), 10px) scale(1) `
+                })
                 backdrop.addEventListener('load',function(){
                     backdrop.setAttribute('loaded','')
                 })
@@ -273,6 +420,9 @@ window.addEventListener('DOMContentLoaded',async function(){
                         slideRunning=true
                         tab.setAttribute('closing','')
                         document.querySelector('title').innerHTML=oldtitle
+                        if(window.isWrapped()){
+                            window.wrapperSetTitle(oldtitle)
+                        }
                         await sleep(200)
                         tab.remove()
                     })
@@ -293,18 +443,24 @@ window.addEventListener('DOMContentLoaded',async function(){
                 `
                 let infobar=document.createElement('p')
                 infobar.setAttribute('vibrant','')
-                if(movie[keyword.genre_list]&&movie[keyword.length]){
-                    infobar.innerText=`${movie[keyword.genre_list][0]} ∙ ${movie[keyword.length]}`
-                    movie[keyword.genre_list].forEach(genr=>{
-                        tasteprofile(genr,'1')
-                    })
+                let infobararr=[]
+                if(movie[keyword.genre_list]){
+                    infobararr.push(movie[keyword.genre_list][0])
+                    movie[keyword.genre_list].forEach(genr=>tasteprofile(genr,'1'))
                 }
-                else{
+                if(movie[keyword.length]){
+                    infobararr.push(movie[keyword.length])
+                }
+                if(movie[keyword.rating_list][keyword.rating][keyword.rating_type]){
+                    infobararr.push(`<span rating>${movie[keyword.rating_list][keyword.rating][keyword.rating_type]}</span`)
+                }
+                infobar.innerHTML=infobararr.join(' ∙ ')
+                if(infobararr.length==0){
                     console.warn(`Couldnt find genre or length :\n   movie: ${movie.title}   datatype: ${datatype}\n   openviapage(trueback): ${trueback}`)
                 }
                 
                 let plot=document.createElement('plot')
-                plot.innerText=movie[keyword.plot].replaceAll('<br>','\n')
+                plot.innerText=(movie[keyword.plot]||'no plot available').replaceAll('<br>','\n')
 
                 let controlbar=document.createElement('playcontrol') //add watchlist,watched,dislike,like
                 let watch=document.createElement('button')
@@ -326,8 +482,14 @@ window.addEventListener('DOMContentLoaded',async function(){
                     act.setAttribute("smallactionb","")//add to recommendations
                     act.addEventListener('click',function(){
                         let liked=JSON.parse(localStorage.getItem('user-interact'))
-                         let type=act.getAttribute("action")
+                        let watchlist=JSON.parse(localStorage.getItem('watchlist'))
+                        let type=act.getAttribute("action")
                             if(act.hasAttribute('actived')){
+                                //if already interacted
+                                if(type=='watchlist'){
+                                    delete watchlist[movie[keyword.id_list][keyword.imdb].replaceAll('t','')]
+                                    localStorage.setItem('watchlist',JSON.stringify(watchlist))
+                                }
                                 movie[keyword.genre_list].forEach(genre=>{
                                     if(act==dislike){
                                         tasteprofile(genre,+3,'user interactions')
@@ -355,6 +517,10 @@ window.addEventListener('DOMContentLoaded',async function(){
                                     }
                                 })
                                 try{
+                                   if(type=='watchlist'){
+                                    watchlist[movie[keyword.id_list][keyword.imdb].replaceAll('t','')]=movie.title
+                                    localStorage.setItem('watchlist',JSON.stringify(watchlist))
+                                   }
                                    let intr
                                    if(liked[movie[keyword.id_list][keyword.imdb].replaceAll('t','')]){
                                        intr=liked[movie[keyword.id_list][keyword.imdb].replaceAll('t','')]
@@ -425,41 +591,128 @@ window.addEventListener('DOMContentLoaded',async function(){
                     trailerwindow.removeAttribute('closing')
 
                 })
+
+                //type for specific url structure for diff types
+                if(autopage_type){
+                    window.lastItemType=autopage_type
+                    //using lastitemtype for debug add directly as arg in watchfunction
+                }
+                else if(type){
+                    if(type.includes('fallback')){
+                        console.warn(`Using fallback type as "${type}" : ${movie.title}`)
+                        itemtype='movies'
+                    }
+                    window.lastItemType=type
+                }
+                let more=document.createElement('section')
+                if(window.isWrapped()){
+                    window.showads=true
+                }
+                else{
+                    window.showads=false
+                }
+                if(itemtype=='series'){
+                    const seriesapi=api.api.other_apis.series_specific.structure
+                    fetch(String(seriesapi.lookup.url).replaceAll('{imdb}',movie[keyword.id_list][keyword.imdb])).then(txt=>txt.json()).then(res=>{
+                        const seriesid=res[seriesapi.lookup.response.id]
+                        fetch(`${String(seriesapi.seasons.url).replaceAll('{id}',seriesid)}`).then(tx=>tx.json()).then(seriesinfo=>{
+                            console.log(seriesinfo)
+                            if(typeof seriesinfo=="object"){
+                                const seasonwrap=document.createElement('seasonwrap')
+                                const seasonresponselayout=seriesapi.seasons.response
+                                seriesinfo.forEach((season,whichseason)=>{
+                                    const eachwrap=document.createElement('season')
+                                    eachwrap.addEventListener('click',function(){
+                                        eachwrap.toggleAttribute('opened')
+                                    })
+                                    const first=document.createElement('seasoninner')
+                                    const thumbnail=document.createElement('img')
+                                    thumbnail.src=season[seasonresponselayout.image_list][seasonresponselayout.image]
+                                    const stxt=document.createElement('p')
+                                    stxt.innerText=`season ${whichseason+1}`
+                                    console.log(season[seasonresponselayout.episode_count])
+                                    const chooser=document.createElement('seasoninner')
+                                    chooser.setAttribute('episodelist','')
+                                    for (let count=1;count<(season[seasonresponselayout.episode_count]+1);count++){
+                                        const episodec=document.createElement('button')
+                                        episodec.setAttribute('episodeChooser','')
+                                        episodec.innerHTML=count
+                                        episodec.addEventListener('click',function(ev){
+                                            ev.stopPropagation()
+                                            window.watch(movie,false,keyword,'none',(window.showads||true),itemtype,{season:whichseason+1,episode:count})
+                                            // alert(`season ${whichseason+1} episode ${count}`)
+                                        }) 
+                                        chooser.append(episodec)
+                                    }
+
+                                    first.append(thumbnail,stxt)
+                                    eachwrap.append(first,chooser)
+                                    seasonwrap.append(eachwrap)
+                                })
+                                try{
+                                    if(more.querySelector('similar')){                                           
+                                        more.querySelector('similar').previousElementSibling.before(seasonwrap)
+                                    }
+                                    else{
+                                        more.append(seasonwrap)
+                                    }
+                                }
+                                catch(er){
+                                    console.error(er)
+                                    more.append(seasonwrap)
+                                }
+                            }
+                        })
+                    })
+                }
+
                 //waittimecheck
                 let release=new Date(movie[keyword.release_date])
                 let now=new Date()
                 let diff=Math.floor(Math.abs(now-release)/(1000*60*60*24))
                 let statuscheck=false
+                let statustext
                 if(config.config.wait_after_status.value!==false){
-                    if(movie[keyword.status]==config.config.wait_after_status.value){
+                    if((movie[keyword.status]||config.config.wait_after_status.value)==config.config.wait_after_status.value){
                         statuscheck=true
+                        statustext=`equal to expected status (${movie[keyword.status]})`
                     }
                     else{
                         statuscheck=false
+                        statustext=`not equal to expected status : ${movie[keyword.status]} : ${config.config.wait_after_status.value}`
                     }
                 }
                 else{
                     statuscheck=true
+                    statustext='statuscheck is turned off'
                 }
-                if(config.config.waittime_after_release.value<diff && statuscheck){
+                const expected=config.config.waittime_after_release.value
+                if(expected<(diff || expected+1) && statuscheck){
                     watch.setAttribute('playable','')
                     watch.innerText='Watch'
                     watch.addEventListener('click',async function(){
+                      if(itemtype!='series'){
                         console.log('watching')
+                        window.watch(movie,false,keyword,'none',(window.showads||true),itemtype)
                         addwatched()
                         if(movie[keyword.genre_list]){
                             movie[keyword.genre_list].forEach(genr=>{
                               tasteprofile(genr,2)
                          })
+                      }
+                      else{
+                        alert('watching a series')
+                      }
                     }
                     })
                 }
                 else{
                     watch.setAttribute('notplayable','')
                     watch.innerText='Unavailable'
+                    console.log(`watch attributes (not playable) :\n   statuscheck : ${statuscheck} (${statustext})\n   wait time : ${config.config.waittime_after_release.value}<${diff} (${config.config.waittime_after_release.value<diff}) (${diff || 'release date wasnt provided using expected+1'})`)
                 }
 
-                let more=document.createElement('section')
+                
                 //movieseries
                 function addtosimilar(similar){
                         if(similar.title!=movie.title){
@@ -468,12 +721,22 @@ window.addEventListener('DOMContentLoaded',async function(){
                             cardim.src=String(api.api.structure.landscape_poster).replaceAll('{posterID}',similar[keyword.posterID])
 
                             similarcard.addEventListener('click',async function(){
-                                let keyw=api.api.structure.response.translator.similar_response
-                                window.location.href=`./?page/=m${similar[keyw.id_list][keyw.id]}xid`
+                              let keyw=api.api.structure.response.translator.similar_response
+                              if((similar[keyw.id_list][keyw.id]||similar[keyw.id_list][keyw.id_fallback])!=undefined){
+                                window.location.href=`./?page/=m${similar[keyw.id_list][keyw.id]||similar[keyw.id_list][keyw.id_fallback]}xid`
                                 
                                 tab.setAttribute('closing','')
                                 await sleep(300)
                                 tab.remove()
+                              }
+                              else{
+                                console.error(`error when opening similarpage : couldnt find id`)
+                                console.log(similar)
+                                console.log(similar[keyw.id_list])
+                                console.log(similar[keyw.id_list][keyw.id])
+                                console.log(similar[keyw.id_list][keyw.id_fallback])
+                                console.log(keyw.id)
+                              }
                             })
                             let simtitle=document.createElement('p')
                             simtitle.innerText=similar.title
@@ -532,12 +795,12 @@ window.addEventListener('DOMContentLoaded',async function(){
                 }
                 controlbar.append(watch,trailer,watchlist,watched,like,dislike)
                 tab.setAttribute('info','')
-                tab.append(backdrop,back)
+                tab.append(backdrop,back,moreopt)
                 main.append(title,infobar,plot,controlbar)
                 tab.setAttribute('closing','')
                 tab.append(main,more)
                 try{
-                    window.loader('h','h')
+                    window.smallloader('h')
                 }
                 catch(e){
                     console.error(`Failed to remove loader :\n   fallback : trying to remove loader directly\n   error : ${e}`)
@@ -551,6 +814,7 @@ window.addEventListener('DOMContentLoaded',async function(){
                         console.error(`Tried to remove loader directly :\n   status : failed\n   error : ${er}\n   no-force-attempt : ${e}`)
                     }
                 }
+
                 document.body.append(tab)
                 //savedlikes n shi
                 if(localStorage.getItem('user-interact')){
@@ -573,10 +837,22 @@ window.addEventListener('DOMContentLoaded',async function(){
         console.log(`endpoint => ${api.api.start_url} [movie data]`)
         //bylink
         if(autopage){
+            let failcode='code not found'
             fetch(`${api.api.translator.replace('{type}',autopage_type).replace('{imdb}',idstarter+autopage.slice(1)).replace('{clientid}',api.api.other_apis.id_translator.clientid)}&app-name=OpenFlix&app-version=1.0&shareid=${linkid}`).then(text=>text.json()).then(res=>{
                if(res.title){
                         openpage(res,api,keyword,'other',res[api.api.structure.response.translator.similar],true)
                }
+               else{
+                failcode=res.code||'code not found (res)'
+                throw new Error(`no title found in translater response (${res.code || 'error code not found res[code]'}) : ${JSON.stringify(res)}`)
+               }
+            }).catch(er=>{
+                const errorurl= new URL('./error',window.location.origin)
+                errorurl.searchParams.set(`error`,`failed to find "${autopage || 'page not found'}"`)
+                errorurl.searchParams.set('code',failcode)
+                errorurl.searchParams.set('message',`couldn't find the item in the database`)
+                window.location.replace(errorurl)
+                console.error(`failed to find page : ${autopage} (${er})`)
             })
         }
         else{
@@ -586,7 +862,7 @@ window.addEventListener('DOMContentLoaded',async function(){
         document.querySelectorAll('section[fill]').forEach(fill=>{
           let fetchpath
           let manual=false
-
+        
           if(fill.getAttribute('fill').slice(0,2)=='//'){
             let genre=genrrr[0]
             manual=true
@@ -668,7 +944,7 @@ window.addEventListener('DOMContentLoaded',async function(){
                     let slide=document.createElement('img')
                     slide.src=String(api.api.structure.backdrops).replaceAll('{backdropID}',movie[keyword.backdropID])
                     slide.setAttribute('name',movie.title)
-                    slide.setAttribute('desc',movie[keyword.plot])
+                    slide.setAttribute('desc',(movie[keyword.plot]||"no plot available"))
                     slide.setAttribute('genre',movie[keyword.genre_list].join(','))
                     slide.setAttribute('id',movie[keyword.id_list][keyword.imdb])
                     try{
@@ -726,17 +1002,17 @@ window.addEventListener('DOMContentLoaded',async function(){
               contain.append(im,title)
               fill.append(contain)
               contain.addEventListener('click',()=>{
-                window.loader('loading','s')
+                window.smallloader('s')
                 if(manual){
                     let dict=api.api.other_apis.alltime_popular.structure.response
                      fetch(`${api.api.translator.replace('{type}','movies').replace('{imdb}',movie[dict.id_list][dict.id]).replace('{clientid}',api.api.other_apis.id_translator.clientid)}&app-name=OpenFlix&app-version=1.0&shareid=${linkid}`).then(text=>text.json()).then(res=>{
                          if(res.title){
-                            openpage(res,api,keyword,'other',res[api.api.structure.response.translator.similar])
+                            openpage(res,api,keyword,'other',res[api.api.structure.response.translator.similar],false,(fill.getAttribute('type')||fill.getAttribute('filter')))
                          }
                      })
                 }
                 else{
-                    openpage(movie,api,keyword,'auto',data)
+                    openpage(movie,api,keyword,'auto',data,false,(fill.getAttribute('type')||fill.getAttribute('filter')))
                 }
               })
               
@@ -811,29 +1087,94 @@ window.addEventListener('DOMContentLoaded',async function(){
        })
      }
      refreshtab()
+    function refreshwatchlist(){
+        if(document.querySelector('[table="watchlist"]')){
+            const watchlistX=Object.entries(JSON.parse(localStorage.getItem('watchlist')))
+            if(watchlistX.length==0){
+                document.querySelector('[table="watchlist"]').innerHTML='no items in watchlist'            
+            }
+            else{document.querySelector('[table="watchlist"]').innerHTML=''}
+            watchlistX.forEach(([id,name])=>{
+                const item=document.createElement('titem')
+                const title=document.createElement('p')
+                title.innerText=name
+                const buttonwrap=document.createElement('alignR')
+                const watch=document.createElement('button')
+                watch.innerHTML='<i class="bi bi-play-fill"></i>'
+                const deletex=document.createElement('button')
+                deletex.innerHTML='<i class="bi bi-trash3-fill"></i>'
+
+                watch.addEventListener('click',function(){
+                    window.location.href=`${window.location.origin}?page/=m${id}`
+                })
+                deletex.addEventListener('click',async function(){
+                    const watchlist=JSON.parse(localStorage.getItem('watchlist'))
+                    const interacts=JSON.parse(localStorage.getItem('user-interact'))
+                    try{
+                        delete watchlist[id]
+                        delete interacts[id]['watchlist']
+                        localStorage.setItem('user-interact',JSON.stringify(interacts))
+                        localStorage.setItem('watchlist',JSON.stringify(watchlist))
+
+                        item.setAttribute('hiddenA','')
+                        await sleep(300)
+                        item.style.height='0px'
+                        await sleep(300)
+                        item.remove()
+                    }
+                    catch(er){
+                        console.error(`error when deleting watchlist item:${name} (${id}) : ${er}`)
+                    }
+                    
+                })
+
+                buttonwrap.append(watch,deletex)
+                item.append(title,buttonwrap)
+                document.querySelector('[table="watchlist"]').append(item)
+            })
+        }
+
+    }
+    refreshwatchlist()
     document.querySelectorAll('tabs tab').forEach(tab=>{
-        tab.addEventListener('click',function(){
+        tab.addEventListener('click',async function(){
             currenttab=tab.getAttribute('tab')
             refreshtab()
-            document.querySelectorAll(`section:not([${currenttab}])`)?.forEach(tabs=>{
+            if(currenttab!='watchlist'){
+            document.querySelector('staticsection[sect=watchlist]').setAttribute('hiddenA','')
+            await sleep(200)
+            document.querySelector('staticsection[sect=watchlist]').setAttribute('hiddenB','')
+            document.querySelectorAll(`section:not([${currenttab}])`)?.forEach(async tabs=>{
                 tabs.setAttribute('hiddenA','')
-                tabs.closest('scroller').previousElementSibling.setAttribute('hiddenA','')
+                if(tabs.closest('scroller')?.previousElementSibling){
+                    tabs.closest('scroller').previousElementSibling.setAttribute('hiddenA','')
+                }
             })
             document.querySelectorAll(`section[${currenttab}]`)?.forEach(tabs=>{
                 tabs.previousElementSibling?.removeAttribute('hiddenA')
+                tabs.closest('scroller').previousElementSibling?.removeAttribute('hiddenA')
                 tabs?.removeAttribute('hiddenA')
             })
+            }
+            else{  
+                refreshwatchlist()
+                document.querySelector('staticsection[sect=watchlist]')?.removeAttribute('hiddenA')
+                document.querySelector('staticsection[sect=watchlist]')?.removeAttribute('hiddenB')
+            }
         })
     })
+    let animator=document.querySelector('windowmove')
+    let originalbutton=document.querySelector('[link="account/"]').querySelector('button')
+  function refreshAcc(){
     let pos=document.querySelector('[account]').getBoundingClientRect()
     console.log(pos.x)
     console.log(pos.y)
-    let originalbutton=document.querySelector('[link="account/"]').querySelector('button')
-    let animator=document.querySelector('windowmove')
     animator.style.width=originalbutton.clientWidth+'px'
     animator.style.height=originalbutton.clientHeight+'px'
     animator.style.transform=`translate(${pos.x}px,${pos.y}px)`
-
+  }
+  refreshAcc()
+  window.addEventListener('resize',refreshAcc)
     document.querySelector('[link="account/"]').addEventListener('click',async function(ev){
         animator.style.transition=' 0.3s all, 0.3s 0.2s border-radius'
         animator.style.width='100vw'
@@ -850,4 +1191,6 @@ window.addEventListener('DOMContentLoaded',async function(){
     if(!window.profiledata){
             const rep=await window.fileIncidentReport('Profile check is missing',true,'no fetchpath : profile.js missing','main',window.location)
     }
+    await sleep(1000)
+    refreshAcc()
 })

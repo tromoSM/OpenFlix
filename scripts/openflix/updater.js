@@ -68,7 +68,13 @@ fetch('../scripts/openflix/identity.json').then(id=>id.json()).then(identity=>{
         }
         if(update){
            debuglog('your platform supports update')
-           return fetch(updateroot).then(txt=>txt.json()).then(updateX=>{
+           return fetch(updateroot)
+           .then(raw=>{
+            if(!raw.ok){
+                throw new Error(`Failed to connect to update check service (${raw.status}) : ${raw.statusText}`)
+            }
+            return raw.json()
+           }).then(updateX=>{
             debuglog('fetched update metadata')
             if(Number(updateX.update['update-count'])>Number(identity.openflix.version_release)){
                 debuglog(`update found : ${Number(identity.openflix.version_release)}(${identity.openflix.version}) => ${Number(updateX.update['update-count'])}(v${updateX.update.update_version[updateid]}) `)
@@ -97,11 +103,21 @@ fetch('../scripts/openflix/identity.json').then(id=>id.json()).then(identity=>{
                 console.log('OpenFlix is up to date ')
                 return ['OpenFlix is up to date',{}]
             }
+        }).catch(er=>{
+            console.error(`error when connecting to update check service : ${er}`)
+            return ['failed to check for updates. Error when connecting to update service',{}]
         })
         }
+
         else{
             debuglog('Your platform or openflix version doesnt support updates. On some platforms updating is disabled because itll update it self automatically')
             return [`OpenFlix - ${updateid}(${id}-${platform}) \n The version of openflix you're using doesnt support updating. On some platforms updating isnt supported because it will update it self automatically`,{}]
         }  
   }
+}).catch(er=>{
+        console.error(`failed to fetch identity : ${er}`)
+        window.IsUpdateSupported=()=>{
+            console.error('update might be supported but returned unsupported due to failing to fetch identity')
+            return false
+        }
 })

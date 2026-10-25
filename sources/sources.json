@@ -1,18 +1,42 @@
 {
     "source":{
-        "from":"tromoSM",
-        "contact":"none",
-        "manifest_version":1    
+        "from":"tromoSM (demo)",
+        "contact":"tromosm.gt.tc/?utm_source=openflix_source_demo&feedback=true",
+        "manifest_version":1
     },
-    "config":{
-        "server_list":{
-            "keep_hidden":"hide"
-        }
+    "dynamic_linking":{
+        "description":"ex : if you want the users to go to https://www.imdb.com/title/tt0903747 you can use https://www.imdb.com/title/{imdb} and it'll automatically fill {imdb} with the imdbID",
+        "available_params":[
+            ["imdbID","{imdb}"],
+            ["tmdbID","{tmdb}"],
+            ["openflixID","{openflix}"],
+            ["yttrailer","{trailer}"],
+            ["season","{season}"],
+            ["episode","{episode}"],
+            ["title (slug)","{slug}"]
+        ],
+        "request_more_at":"tromosm.gt.tc/?utm_source=openflix_serverparam_request&feedback=true"
     },
     "server_list":[
         {
-            "name":"test site",
-            "url":"https://google.com/?t={imdb}"
+            "name":"demo",
+            "url":"https://tromosm.github.io/openflix-demo-page/?imdb={imdb}&title={slug}",
+            "type":"embed",
+            "optional":{
+                "disable_sandbox":false,
+                "comment":"demo"
+            },
+            "attributes":{
+                "popup_ads":false,
+                "incontent_ads":false,
+                "fixed_ads":false,
+                "sandboxing":true
+            }
+        },
+        {
+            "name":"test direct",
+            "url":"https://www.pexels.com/download/video/856925/",
+            "type":"test"
         }
     ]
 }

@@ -1,0 +1,6 @@
+{
+    "vendor":"demo (no vendor/openflix_sources_demo)",
+        "vendor_?":"the name of the company or person that provides the server list and host openflix.",
+    "vendor_contact":"tromosm.gt.tc",
+        "vendor_contact_?":"the contact of the vendor (users can see this)"
+}

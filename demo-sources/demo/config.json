@@ -1,0 +1,29 @@
+{
+    "openflix_manifest":{
+        "name":"config",
+        "version":1,
+        "manifest_version":1
+    },
+    "config":{
+        "waittime_after_release":{
+            "value":10,
+            "description":"When will users be able to click watch after the release day of the movie\nMeasurement: Days(int)\neg: 10 -> users will only be able to watch after 10days of release"
+        },
+        "wait_after_status":{
+            "value":"ended",
+            "description":"When will users be able to click watch based on the status of of the movie\nMeasurement: Status(str)\ntip: use false to turn off the status check\neg: ended -> users will only able to watch if api-response.[keyword:status] is 'ended'"
+        },
+        "hide_server_printing":{
+            "value":false,
+            "description":"This will prevent printing selected server in the console\n.Users can still see if they went to yourdomain.com/sources/sources.json\nMeasurement : Hidden(bool)\neg : true -> users will not see server name printed in the console"
+        },
+        "player_disable_rightclick":{
+            "value":true,
+            "description":"This will disable right clicks from showing browsers default context menu when inside the media player.\n Users can still see the url from devtools. Measurement : Allow(bool)\neg: true -> users will not be able to use the browsers context menu when right clicked on the media player."
+        },
+        "player_disable_popups":{
+            "value":true,
+            "description":"This will disable opening any external page from any external player listed in sources/sources.json\nThis will disable most of the ads from external sites.\nMeasurements: Disable(bool\neg: true -> disable popups"
+        }
+    }
+}
