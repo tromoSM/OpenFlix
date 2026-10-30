@@ -1,0 +1,4 @@
+{
+    "url":"blogsource.json",
+    "url_":"file path or url path for the file that contains the blog source from the prespective of /blog | eg: root/blogsource/blog.json => ../blogsource/blog.json"
+}

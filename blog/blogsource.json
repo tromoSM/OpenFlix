@@ -1,0 +1,33 @@
+{
+    "last_updated":"26/10/30",
+    "_tip":{
+        "_why":"writing html inside quotes is annoyin",
+        "blog text syntax":{
+            "links":{
+                "html":"<a href='https://example.com'>test</a>",
+                "text":"[test||https://example.com]"
+            },
+            "newlines":{
+                "html":"first line<br>second line",
+                "text":"first line{break}"
+            },
+            "bold":{
+                "html":"normal text, <strong>Bold text</strong>",
+                "text":"normal text, **Bold text**"
+            },
+            "double_quotes":{
+                "normal":"\"this text is inside quotes\"",
+                "text":"{q}this text is inside quotes{q}"
+            }
+        },
+        "blog date syntax":"YY/MM/DD"
+    },
+    "blog":[
+    ],
+    "_blog_example":{
+        "author":"Admin",
+        "date":"26/10/30",
+        "title":"Accounts page was fixed",
+        "text":"**Bug fix** : Account page's update check was fixed by admin {q}darkshadow{q}.{break} For more info visit [here||https://openflix.site/test]"
+    }
+}
